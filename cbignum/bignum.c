@@ -10,5 +10,3 @@ BigInt bigFromFile(const char *name) {
 	return res;
 }
 
-void initlibbignum() {
-}

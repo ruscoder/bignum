@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "bignum.h"
+#include "cbignum/bignum.h"
 
 
 
