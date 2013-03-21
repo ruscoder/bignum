@@ -1,3 +1,3 @@
-import cppbignum
+import pybignum
 
-print(cppbignum.bignum());
+print(pybignum.bignum());

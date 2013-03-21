@@ -4,12 +4,19 @@ CC=gcc
 CFLAGS=-c
 MAKE = make
 
-MAIN: test.o cbignum/libbignum.so
-	$(CC) -o test test.o -L. -lbignum -Wl,-rpath,.
-	$(MAKE) -C cbignum
+MAIN: test_c.o test_cpp.o
+	$(MAKE) -C cbignum # Test depends lib
 	$(MAKE) -C cppbignum
-test.o: test.c 
-	$(CC) $(CFLAGS) test.c
+
+	$(CC) -o test_c test_c.o -L. -lbignum -Wl,-rpath,.
+	g++ -o test_cpp test_cpp.o -L. -lbignum -lcppbignum -Wl,-rpath,. -I/usr/include/python2.7
+
+
+test_c.o: test_c.c 
+	$(CC) $(CFLAGS) test_c.c
+
+test_cpp.o: test_cpp.cpp
+	g++ $(CFLAGS) test_cpp.cpp
 
 clean:
 	rm -f *.o
