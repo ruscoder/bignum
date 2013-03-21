@@ -7,8 +7,7 @@ MAKE = make
 MAIN: test_c.o test_cpp.o
 	$(MAKE) -C cbignum # Test depends lib
 	$(MAKE) -C cppbignum
-
-	$(CC) -o test_c test_c.o -L. -lbignum -Wl,-rpath,.
+	$(CC) -o test_c test_c.o -L. -lbignum -lm -Wl,-rpath,.
 	g++ -o test_cpp test_cpp.o -L. -lbignum -lcppbignum -Wl,-rpath,. -I/usr/include/python2.7
 
 
