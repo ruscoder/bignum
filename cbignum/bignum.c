@@ -4,8 +4,8 @@
 
 #define BASE 1000 * 1000 * 1000
 
-BigInt bigFromFile(const char *name) {
-	BigInt res;
+struct BigInt bigFromFile(const char *name) {
+	struct BigInt res;
 	
 	return res;
 }

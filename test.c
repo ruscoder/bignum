@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
 	//int *first, *second;
 	// Binary form
-	BigInt a = bigFromFile("jjj");
+	struct BigInt a = bigFromFile("jjj");
 	
 	if (strncmp(argv[5], "-b", 2) ) {
 		a = a;

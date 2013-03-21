@@ -1,5 +1,7 @@
-typedef int * BigInt;
+struct BigInt {
+	int * BigInt;
+	int len;
+};
 
-BigInt bigFromFile(const char *);
+struct BigInt bigFromFile(const char *);
 
-void initlibbignum();

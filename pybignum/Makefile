@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-c
 
 MAIN: cppbignum.o 
-	$(CC) -shared -o cppbignum.so cppbignum.o
+	$(CC) -shared -o libcppbignum.so cppbignum.o
 
 
 cppbignum.o: cppbignum.cpp
