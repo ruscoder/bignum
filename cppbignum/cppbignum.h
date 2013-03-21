@@ -6,12 +6,15 @@ class Big {
 public:
 	Big(const std::string);
 	~Big();
+	Big(const Big&);
+	Big &operator =(const Big &); 
 	const Big operator +(Big&);
 	const Big operator -(Big&);
-	Big(struct BigNum);
-	struct BigNum getNum();
+	const Big operator *(Big&);
+	Big(BigNum);
+	BigNum getNum() const;
 	void toFile(const std::string);
 
 private:
-	struct BigNum num;
+	BigNum num;
 };

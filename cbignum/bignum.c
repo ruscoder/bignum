@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include <ctype.h>
 
 #define BASE 1000 * 1000 * 100
@@ -11,18 +12,23 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-struct BigNum newBigNum(int len) {
-	struct BigNum res;
+BigNum newBigNum(int len) {
+	BigNum res;
 	res.len = len;
 	res.digits = calloc(len, sizeof(int));
 	return res;
 }
 
-void bigFree(struct BigNum num) {
+BigNum bigCopy(BigNum num) {
+	BigNum res = newBigNum(num.len);
+	memcpy(res.digits, num.digits, sizeof(num.digits));
+	return res;
+}
+void bigFree(BigNum num) {
 	free(num.digits);
 }
 
-struct BigNum removeLeadNulls(struct BigNum num) {
+BigNum removeLeadNulls(BigNum num) {
 	int i;
 	for (i = num.len - 1; i >= 0; --i) {
 		if (num.digits[i] == 0)
@@ -33,8 +39,8 @@ struct BigNum removeLeadNulls(struct BigNum num) {
 	return num;
 }
 
-struct BigNum bigFromFile(const char *name) {
-	struct BigNum res;
+BigNum bigFromFile(const char *name) {
+	BigNum res;
 	
 	FILE *fp = fopen(name, "r+");
 	if (fp == NULL) {
@@ -73,7 +79,7 @@ struct BigNum bigFromFile(const char *name) {
 }
 
 
-void bigToFile(const char *name, struct BigNum first) {
+void bigToFile(const char *name, BigNum first) {
 	FILE *fp = fopen(name, "w+");
 	if (fp == NULL) {
 		printf("Cannot open file %s\n", name);
@@ -87,8 +93,8 @@ void bigToFile(const char *name, struct BigNum first) {
 	fclose(fp);
 }
 
-struct BigNum bigPlus(struct BigNum first, struct BigNum second) {
-	struct BigNum res = newBigNum(MAX(first.len, second.len) + 1);
+BigNum bigPlus(BigNum first, BigNum second) {
+	BigNum res = newBigNum(MAX(first.len, second.len) + 1);
 	int i;
 	unsigned int cur = 0;
 	for (i = 0; i < res.len; ++i) {
@@ -105,9 +111,9 @@ struct BigNum bigPlus(struct BigNum first, struct BigNum second) {
 	return res;
 }
 
-struct BigNum bigMinus(struct BigNum first, struct BigNum second) {
+BigNum bigMinus(BigNum first, BigNum second) {
 	// A >= B always
-	struct BigNum res = newBigNum(MAX(first.len, second.len));
+	BigNum res = newBigNum(MAX(first.len, second.len));
 	int i;
 	for (i = 0; i < res.len; ++i) {
 		printf("f=%d, s=%d\n", first.digits[i], second.digits[i]);
@@ -126,8 +132,8 @@ struct BigNum bigMinus(struct BigNum first, struct BigNum second) {
 }
 
 
-struct BigNum bigMul(struct BigNum first, struct BigNum second) {
-	struct BigNum res = newBigNum(first.len + second.len);
+BigNum bigMul(BigNum first, BigNum second) {
+	BigNum res = newBigNum(first.len + second.len);
 	int i;
 	for (i = 0; i < first.len; ++i) {
 		long long cur = 0;

@@ -1,14 +1,14 @@
-struct BigNum {
+typedef struct __BigNum {
 	int * digits;
 	int len;
-};
+} BigNum;
 
-struct BigNum newBigNum(int);
-void bigFree(struct BigNum);
+BigNum newBigNum(int);
+void bigFree(BigNum);
 
-struct BigNum bigFromFile(const char *);
-void bigToFile(const char *, struct BigNum);
-struct BigNum bigPlus(struct BigNum, struct BigNum);
-struct BigNum bigMinus(struct BigNum, struct BigNum);
-struct BigNum bigMul(struct BigNum, struct BigNum);
-
+BigNum bigFromFile(const char *);
+void bigToFile(const char *, BigNum);
+BigNum bigPlus(BigNum, BigNum);
+BigNum bigMinus(BigNum, BigNum);
+BigNum bigMul(BigNum, BigNum);
+BigNum bigCopy(BigNum);
