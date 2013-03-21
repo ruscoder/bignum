@@ -5,6 +5,7 @@ extern "C" {
 class Big {
 public:
 	Big(const std::string);
+	~Big();
 	const Big operator +(Big&);
 	const Big operator -(Big&);
 	Big(struct BigNum);

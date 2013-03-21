@@ -5,6 +5,10 @@ Big::Big(const std::string fileName) {
 	num = bigFromFile(fileName.c_str());
 }
 
+Big::~Big() {
+	bigFree(num);
+}
+
 Big::Big(struct BigNum first) {
 	num = first;
 }
