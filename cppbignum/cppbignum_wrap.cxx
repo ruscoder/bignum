@@ -3222,6 +3222,31 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Big *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Big *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_Big",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_Big,  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Big" "', argument " "1"" of type '" "Big &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Big" "', argument " "1"" of type '" "Big &""'"); 
+  }
+  arg1 = reinterpret_cast< Big * >(argp1);
+  result = (Big *)new Big(*arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Big, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Big___add__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Big *arg1 = (Big *) 0 ;
@@ -3324,7 +3349,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   BigNum arg1 ;
   void *argp1 ;
@@ -3374,10 +3399,19 @@ SWIGINTERN PyObject *_wrap_new_Big(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_BigNum, 0);
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Big, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_new_Big__SWIG_2(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_BigNum, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_Big__SWIG_3(self, args);
     }
   }
   if (argc == 1) {
@@ -3394,6 +3428,7 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    Big::Big(char const *)\n"
     "    Big::Big(Big const &)\n"
+    "    Big::Big(Big &)\n"
     "    Big::Big(BigNum)\n");
   return 0;
 }

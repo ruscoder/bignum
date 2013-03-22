@@ -10,6 +10,8 @@ public:
 	Big(const char *);
 	~Big();
 	Big(const Big&);
+	Big(Big &);
+
 	Big &operator =(const Big &); 
 	const Big operator +(Big&);
 	const Big operator -(Big&);

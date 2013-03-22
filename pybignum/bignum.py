@@ -1,3 +1,4 @@
 import pybignum
 
-print(pybignum.bignum());
+print(pybignum.fromFile("hello"));
+

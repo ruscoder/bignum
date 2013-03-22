@@ -5,7 +5,7 @@ CFLAGS=-c
 
 MAIN: cppbignum.o pybignum.o 
 	$(CC) -shared -o libcppbignum.so cppbignum.o -L. -lbignum -Wl,-rpath,.
-	$(CC) -shared -o pybignum.so pybignum.o -L.. -lcppbignum -Wl,-rpath,.
+	$(CC) -shared -o pybignum.so pybignum.o -L. -lcppbignum -Wl,-rpath,.
 
 
 	swig -c++ -python cppbignum.i
