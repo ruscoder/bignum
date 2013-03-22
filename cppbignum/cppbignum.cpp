@@ -1,8 +1,8 @@
 #include <string>
 #include "cppbignum.h"
 #include <cstdio>
-Big::Big(const std::string fileName) {
-	num = bigFromFile(fileName.c_str());
+Big::Big(const char* fileName) {
+	num = bigFromFile(fileName);
 }
 
 Big::~Big() {
@@ -14,7 +14,10 @@ Big::Big(BigNum first) {
 }
 
 Big::Big(const Big &first) {
-	printf("copy %p\n",num.digits);
+	// Free memory of old num
+	bigFree(num);
+	// Copy new num
+	num = bigCopy(first.getNum());
 }
 
 Big &Big::operator =(const Big &rightVal) {
@@ -41,6 +44,6 @@ const Big Big::operator *(Big& rightVal) {
 	return Big(bigMul(num, rightVal.getNum()));
 }
 
-void Big::toFile(const std::string fileName) {
-	bigToFile(fileName.c_str(), num);
+void Big::toFile(const char * fileName) {
+	bigToFile(fileName, num);
 }

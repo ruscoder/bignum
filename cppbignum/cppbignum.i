@@ -1,6 +1,9 @@
-extern "C" {
-#include "../cbignum/bignum.h"
-};
+%module cppbignum
+
+%{
+#define SWIG_FILE_WITH_INIT
+#include "cppbignum.h"
+%}
 
 class Big {
 public:
@@ -18,3 +21,4 @@ public:
 private:
 	BigNum num;
 };
+
