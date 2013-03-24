@@ -1,21 +1,29 @@
 # makefile
 
-CC=gcc
-CFLAGS=-c
+CC = gcc
+CFLAGS = -c
+DBG =
 MAKE = make
 
-MAIN: test_c.o test_cpp.o 
-	$(MAKE) -C cbignum # Test depends lib
+MAIN: depends test_c.o test_cpp.o 
+	$(MAKE) -C cbignum # depends lib
 	$(MAKE) -C cppbignum
-	$(CC) -o test_c test_c.o -L. -lbignum -lm -Wl,-rpath,.
-	g++ -o test_cpp test_cpp.o -L. -lbignum -lcppbignum -Wl,-rpath,. -I/usr/include/python2.7
+	$(CC) $(DBG) -o test_c test_c.o -L. -lbignum -lm -Wl,-rpath,.
+	g++ $(DBG) -o test_cpp test_cpp.o -L. -lbignum -lcppbignum -Wl,-rpath,. 
+
+depends:
+	ln -f -s cbignum/libbignum.so libbignum.so
+	ln -f -s ../cbignum/libbignum.so cppbignum/libbignum.so	
+	ln -f -s cppbignum/_cppbignum.so _cppbignum.so
+	ln -f -s cppbignum/cppbignum.py cppbignum.py
+	ln -f -s cppbignum/libcppbignum.so libcppbignum.so
 
 
 test_c.o: test_c.c libbignum.so
-	$(CC) $(CFLAGS) test_c.c
+	$(CC) $(DBG) $(CFLAGS) test_c.c
 
 test_cpp.o: test_cpp.cpp libbignum.so libbignum.so
-	g++ $(CFLAGS) test_cpp.cpp
+	g++ $(DBG) $(CFLAGS) test_cpp.cpp
 
 clean:
 	rm -f *.o
