@@ -84,6 +84,7 @@ class Big(_object):
         except: self.this = this
     def getNum(self): return _cppbignum.Big_getNum(self)
     def toFile(self, *args): return _cppbignum.Big_toFile(self, *args)
+    def out(self): return _cppbignum.Big_out(self)
 Big_swigregister = _cppbignum.Big_swigregister
 Big_swigregister(Big)
 

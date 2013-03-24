@@ -10,20 +10,18 @@ Big::~Big() {
 	bigFree(num);
 }
 
-Big::Big(BigNum first) {
-	printf("maked from bignum %p\n", first.digits);
+Big::Big(const BigNum &first) {
 	num = first;
 }
 
 Big::Big(const Big &first) {
-	// Free memory of old num
-	bigFree(num);
-	// Copy new num
+	// Make Copy for new num
 	num = bigCopy(first.getNum());
 }
 
 Big &Big::operator =(const Big &rightVal) {
-	printf("=== %p to %p\n",num.digits, rightVal.getNum().digits);
+	if (this == &rightVal)
+		return *this;
 	// Free memory of old num
 	bigFree(num);
 	// Copy new num
@@ -31,7 +29,7 @@ Big &Big::operator =(const Big &rightVal) {
 	return *this;
 }
 
-BigNum Big::getNum() const {
+const BigNum &Big::getNum() const {
 	return num;
 }
 
@@ -49,4 +47,8 @@ const Big Big::operator *(Big& rightVal) {
 
 void Big::toFile(const char * fileName) {
 	bigToFile(fileName, num);
+}
+
+void Big::out() {
+	//bigPrint(num);
 }
