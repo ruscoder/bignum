@@ -3326,27 +3326,22 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  BigNum arg1 ;
-  void *argp1 ;
+  BigNum *arg1 = 0 ;
+  void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
   Big *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:new_Big",&obj0)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_BigNum,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Big" "', argument " "1"" of type '" "BigNum""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Big" "', argument " "1"" of type '" "BigNum""'");
-    } else {
-      BigNum * temp = reinterpret_cast< BigNum * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_BigNum,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Big" "', argument " "1"" of type '" "BigNum const &""'"); 
   }
-  result = (Big *)new Big(arg1);
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Big" "', argument " "1"" of type '" "BigNum const &""'"); 
+  }
+  arg1 = reinterpret_cast< BigNum * >(argp1);
+  result = (Big *)new Big((BigNum const &)*arg1);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Big, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -3394,7 +3389,7 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    Big::Big(char const *)\n"
     "    Big::Big(Big const &)\n"
-    "    Big::Big(BigNum)\n");
+    "    Big::Big(BigNum const &)\n");
   return 0;
 }
 
@@ -3405,7 +3400,7 @@ SWIGINTERN PyObject *_wrap_Big_getNum(PyObject *SWIGUNUSEDPARM(self), PyObject *
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  BigNum result;
+  BigNum *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:Big_getNum",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3413,8 +3408,8 @@ SWIGINTERN PyObject *_wrap_Big_getNum(PyObject *SWIGUNUSEDPARM(self), PyObject *
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Big_getNum" "', argument " "1"" of type '" "Big const *""'"); 
   }
   arg1 = reinterpret_cast< Big * >(argp1);
-  result = ((Big const *)arg1)->getNum();
-  resultobj = SWIG_NewPointerObj((new BigNum(static_cast< const BigNum& >(result))), SWIGTYPE_p_BigNum, SWIG_POINTER_OWN |  0 );
+  result = (BigNum *) &((Big const *)arg1)->getNum();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_BigNum, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -3454,6 +3449,27 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Big_out(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Big *arg1 = (Big *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Big_out",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Big_out" "', argument " "1"" of type '" "Big *""'"); 
+  }
+  arg1 = reinterpret_cast< Big * >(argp1);
+  (arg1)->out();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *Big_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
@@ -3470,6 +3486,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_Big", _wrap_new_Big, METH_VARARGS, NULL},
 	 { (char *)"Big_getNum", _wrap_Big_getNum, METH_VARARGS, NULL},
 	 { (char *)"Big_toFile", _wrap_Big_toFile, METH_VARARGS, NULL},
+	 { (char *)"Big_out", _wrap_Big_out, METH_VARARGS, NULL},
 	 { (char *)"Big_swigregister", Big_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };

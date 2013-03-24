@@ -21,7 +21,7 @@ BigNum newBigNum(int len) {
 
 BigNum bigCopy(BigNum num) {
 	BigNum res = newBigNum(num.len);
-	memcpy(res.digits, num.digits, sizeof(num.digits));
+	memcpy(res.digits, num.digits, sizeof(num.digits) * num.len);
 	return res;
 }
 void bigFree(BigNum num) {
@@ -30,7 +30,8 @@ void bigFree(BigNum num) {
 
 BigNum removeLeadNulls(BigNum num) {
 	int i;
-	for (i = num.len - 1; i >= 0; --i) {
+	// Remove all nulls except first (i = 0)
+	for (i = num.len - 1; i >= 1; --i) {
 		if (num.digits[i] == 0)
 			num.len--;
 		else
@@ -116,7 +117,6 @@ BigNum bigMinus(BigNum first, BigNum second) {
 	BigNum res = newBigNum(MAX(first.len, second.len));
 	int i;
 	for (i = 0; i < res.len; ++i) {
-		printf("f=%d, s=%d\n", first.digits[i], second.digits[i]);
 		int cur = first.digits[i];
 		if (i < second.len) {
 			if (first.digits[i] < second.digits[i]) {
