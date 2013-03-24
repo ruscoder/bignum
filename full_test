@@ -1,0 +1,47 @@
+#! /bin/bash
+FIRST=$1
+SECOND=$2
+
+ERRORS=""
+
+if [[ $FIRST == "" ]] || [[ $SECOND == "" ]]; then
+	echo Usage: $0 \<first\> \<second\>;
+	exit;
+fi;
+function check_res {
+	if diff res right_res > /dev/null; then
+		echo Done;
+	else
+		echo Fail;
+		ERRORS=true
+	fi;
+}
+
+function test_op {
+	echo Testing $1: 
+	python tester.py $FIRST "$1" $SECOND right_res
+	# c
+	echo -n C module: 
+	./test_c $FIRST "$1" $SECOND res
+	check_res
+	# c++
+	echo -n C++ module: 
+	./test_cpp $FIRST "$1" $SECOND res
+	check_res
+	echo -n Py Module:
+	./test_py.py $FIRST "$1" $SECOND res
+	check_res
+}
+
+echo Tester program
+test_op "+"
+test_op "-"
+test_op "*"
+rm right_res
+rm res
+
+if [[ $ERRORS == "" ]]; then
+	echo "Test done without errors!";
+else
+	echo "FAIL. Some errors was found. "
+fi;
