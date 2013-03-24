@@ -3,7 +3,6 @@
 #include <cstdio>
 Big::Big(const char* fileName) {
 	num = bigFromFile(fileName);
-	printf("maked %p\n", num.digits);
 }
 
 Big::~Big() {
