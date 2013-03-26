@@ -5,33 +5,74 @@
 #include <string.h>
 #include <ctype.h>
 
-#define BASE 1000 * 1000 * 100
+/*#define BASE 1000 * 1000 * 100
 #define DIGITS 8
 #define DIGITSD 8.
 #define OUT_FORMAT "%.8d"
+*/
+#define BASE 10
+#define DIGITS 1
+#define DIGITSD 1.
+#define OUT_FORMAT "%.1d"
+
+
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-BigNum newBigNum(int len) {
+int newObjectsCount = 0,
+	delObjectsCount = 0;
+
+
+BigNum bigNewNum(int len) {
+	newObjectsCount++;
 	BigNum res;
 	res.len = len;
-	res.digits = calloc(len, sizeof(int));
+	res.digits = calloc(len, sizeof(int)); 
+	if (res.digits == NULL) {
+		printf("Cannot allocate memory.\n");
+		exit(1);
+	}
 	return res;
 }
 
-BigNum bigCopy(BigNum num) {
-	BigNum res = newBigNum(num.len);
-	memcpy(res.digits, num.digits, sizeof(num.digits) * num.len);
-	return res;
-}
 void bigFree(BigNum num) {
+	delObjectsCount++;
 	free(num.digits);
 }
 
+void bigVersion() {
+	printf("Big Num Version 1.0\n");
+	printf("New bignum's created: %d\n Deleted: %d", newObjectsCount, delObjectsCount);
+}
+
+BigNum bigCopy(BigNum src) {
+	BigNum res = bigNewNum(src.len);
+	memcpy(res.digits, src.digits, sizeof(int) * src.len);
+	return res;
+}
+
+BigNum bigCopyPart(BigNum src, int start, int len) {
+	// Copy part of BigNum in BigEndian 
+	// from start to start + len
+	// (12345, 0, 2) = 12
+	BigNum res = bigNewNum(len);
+	int pos = src.len - start - len;
+	memcpy(res.digits, src.digits + pos * sizeof(int), len * sizeof(int));	
+	return res;
+}
+
+void bigExtend(BigNum *src, int len) {
+	BigNum new = bigNewNum(src->len + len);
+	memcpy(new.digits + len, src->digits, src->len * sizeof(int));
+	bigFree(*src);
+	*src = new;
+}
+
+
 BigNum removeLeadNulls(BigNum num) {
 	int i;
-	// Remove all nulls except first (i = 0)
-	for (i = num.len - 1; i >= 1; --i) {
+	// Remove all nulls 
+	for (i = num.len - 1; i >= 0; --i) {
 		if (num.digits[i] == 0)
 			num.len--;
 		else
@@ -40,19 +81,35 @@ BigNum removeLeadNulls(BigNum num) {
 	return num;
 }
 
+BigNum bigFromInt(int num) {
+	int len = 1;
+	if (num >= BASE)
+		len = ceil(floor(log10(num) + 1) / DIGITSD);	
+
+	BigNum res = bigNewNum(len);
+	int i = 0;
+	while (num) {
+		div_t divRes = div(num, BASE);
+		res.digits[i] = divRes.rem;
+		num = divRes.quot;
+		i++;
+	}
+	return removeLeadNulls(res);
+}
+
 BigNum bigFromFile(const char *name) {
 	BigNum res;
 	
 	FILE *fp = fopen(name, "r+");
 	if (fp == NULL) {
 		printf("Cannot open file %s\n", name);
-		return;
+		exit(1);
 	}
 
 	// Get file size
 	fseek(fp, 0L, SEEK_END);
 	int size = ftell(fp);
-	res = newBigNum(ceil(size / DIGITSD));
+	res = bigNewNum(ceil(size / DIGITSD));
 	// Seek to start
 	fseek(fp, 0l, SEEK_SET);
 	// Read file
@@ -76,7 +133,7 @@ BigNum bigFromFile(const char *name) {
 	}
 
 	fclose(fp);
-	return res;
+	return removeLeadNulls(res);
 }
 
 
@@ -86,16 +143,32 @@ void bigToFile(const char *name, BigNum first) {
 		printf("Cannot open file %s\n", name);
 		return;
 	}
-	int i;
-	fprintf(fp, "%d", first.digits[first.len - 1]);
-	for (i = first.len - 2; i >= 0; --i) {
-		fprintf(fp, OUT_FORMAT, first.digits[i]);
+	if (first.len == 0) {
+		fprintf(fp, "0");
+	} else {
+		int i;
+		fprintf(fp, "%d", first.digits[first.len - 1]);
+		for (i = first.len - 2; i >= 0; --i) {
+			fprintf(fp, OUT_FORMAT, first.digits[i]);
+		}
 	}
 	fclose(fp);
 }
 
+void bigOut(BigNum first) {
+	if (first.len == 0) {
+		printf("0");
+	} else {
+		int i;
+		printf("%d", first.digits[first.len - 1]);
+		for (i = first.len - 2; i >= 0; --i) {
+			printf(OUT_FORMAT, first.digits[i]);
+		}
+	}
+}
+
 BigNum bigPlus(BigNum first, BigNum second) {
-	BigNum res = newBigNum(MAX(first.len, second.len) + 1);
+	BigNum res = bigNewNum(MAX(first.len, second.len) + 1);
 	int i;
 	unsigned int cur = 0;
 	for (i = 0; i < res.len; ++i) {
@@ -107,6 +180,7 @@ BigNum bigPlus(BigNum first, BigNum second) {
 		res.digits[i] = divRes.rem; // %
 		cur = divRes.quot; // div
 	}
+	// Remove lead nulls
 	if (res.digits[res.len - 1] == 0)
 		res.len--;
 	return res;
@@ -114,7 +188,7 @@ BigNum bigPlus(BigNum first, BigNum second) {
 
 BigNum bigMinus(BigNum first, BigNum second) {
 	// A >= B always
-	BigNum res = newBigNum(MAX(first.len, second.len));
+	BigNum res = bigNewNum(MAX(first.len, second.len));
 	int i;
 	for (i = 0; i < res.len; ++i) {
 		int cur = first.digits[i];
@@ -126,6 +200,7 @@ BigNum bigMinus(BigNum first, BigNum second) {
 			cur -= second.digits[i];
 		}
 		res.digits[i] += cur;
+		
 	}
 	res = removeLeadNulls(res);	
 	return res;
@@ -133,7 +208,7 @@ BigNum bigMinus(BigNum first, BigNum second) {
 
 
 BigNum bigMul(BigNum first, BigNum second) {
-	BigNum res = newBigNum(first.len + second.len);
+	BigNum res = bigNewNum(first.len + second.len);
 	int i;
 	for (i = 0; i < first.len; ++i) {
 		long long cur = 0;
@@ -152,5 +227,81 @@ BigNum bigMul(BigNum first, BigNum second) {
 	}
 	res = removeLeadNulls(res);	
 	return res;
+}
+
+BigNum bigDiv(BigNum first, BigNum second) {
+	// TODO: second == 0
+	BigNum res = bigNewNum(first.len - second.len + 1);
+	int pos = 0,
+		posSecond = res.len - 1; 
+	BigNum part = bigFromInt(0); 
+	while (pos < first.len) {
+		// Extend if < to eq len
+		if (part.len < second.len) {
+			int extLen = second.len - part.len;
+			bigExtend(&part, extLen);
+			int i;
+			for (i = 0; i < extLen; ++i, ++pos) {
+				part.digits[i] = first.digits[first.len - pos - 1];
+			}
+		}
+		if (bigCmp(part, second) == -1) {
+			// part < second
+			bigExtend(&part, 1);
+			part.digits[0] = first.digits[first.len - pos - 1];
+			pos++;
+		}
+		// On current moment part >= second
+		int l = 0, r = BASE, x = 0;
+		BigNum	secondx,
+				old;
+		while (l <= r) {
+			int m = (l + r) >> 1;
+			// Search x: second*x <= part
+			BigNum bigM = bigFromInt(m);
+			secondx = bigMul(second, bigM);
+			bigFree(bigM);
+			if (bigCmp(secondx, part) <= 0) {
+				x = m;
+				l = m + 1;
+			} else {
+				r = m - 1;
+			}
+			bigFree(secondx);
+		}
+		BigNum bigX = bigFromInt(x);
+		secondx = bigMul(second, bigX);
+		old = part;
+		part = bigMinus(part, secondx);
+
+		bigFree(old);
+		bigFree(secondx);
+		bigFree(bigX);
+		res.digits[posSecond--] = x;
+		
+	}
+	bigFree(part);
+	return removeLeadNulls(res);
+}
+
+int bigCmp(BigNum first, BigNum second) {
+	/** returns: 
+	 -1 - first < second
+	  0 - equal
+	  1 - first > second
+	**/
+	if (first.len > second.len) 
+		return 1;
+	if (first.len < second.len)
+		return -1;
+	int i;
+	for (i = first.len - 1; i >= 0; --i) {
+		if (first.digits[i] > second.digits[i])
+			return 1;
+		if (first.digits[i] < second.digits[i])
+			return -1;
+	}
+	
+	return 0;
 }
 

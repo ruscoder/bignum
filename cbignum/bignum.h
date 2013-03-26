@@ -1,5 +1,5 @@
 typedef struct __BigNum {
-	int * digits;
+	int *digits;
 	int len;
 } BigNum;
 
@@ -11,4 +11,11 @@ void bigToFile(const char *, BigNum);
 BigNum bigPlus(BigNum, BigNum);
 BigNum bigMinus(BigNum, BigNum);
 BigNum bigMul(BigNum, BigNum);
+BigNum bigDiv(BigNum, BigNum);
+int bigCmp(BigNum, BigNum);
+
+
 BigNum bigCopy(BigNum);
+BigNum bigCopyPart(BigNum, int, int);
+void bigExtend(BigNum *, int);
+
