@@ -191,15 +191,15 @@ BigNum bigMinus(BigNum first, BigNum second) {
 	BigNum res = bigNewNum(MAX(first.len, second.len));
 	int i;
 	for (i = 0; i < res.len; ++i) {
-		int cur = first.digits[i];
+		int cur = first.digits[i] + res.digits[i];
 		if (i < second.len) {
-			if (first.digits[i] < second.digits[i]) {
+			if (cur < second.digits[i]) {
 				cur += BASE;
 				res.digits[i + 1] = -1;
 			}
 			cur -= second.digits[i];
 		}
-		res.digits[i] += cur;
+		res.digits[i] = cur;
 		
 	}
 	res = removeLeadNulls(res);	
@@ -228,9 +228,12 @@ BigNum bigMul(BigNum first, BigNum second) {
 	res = removeLeadNulls(res);	
 	return res;
 }
-
+ 
 BigNum bigDiv(BigNum first, BigNum second) {
 	// TODO: second == 0
+	if (bigCmp(first, second) == -1) {
+		return bigFromInt(0);
+	}
 	BigNum res = bigNewNum(first.len - second.len + 1);
 	int pos = 0,
 		posSecond = res.len - 1; 
@@ -242,7 +245,7 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			bigExtend(&part, extLen);
 			int i;
 			for (i = 0; i < extLen; ++i, ++pos) {
-				part.digits[i] = first.digits[first.len - pos - 1];
+				part.digits[extLen - 1 - i] = first.digits[first.len - pos - 1];
 			}
 		}
 		if (bigCmp(part, second) == -1) {
@@ -251,6 +254,8 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			part.digits[0] = first.digits[first.len - pos - 1];
 			pos++;
 		}
+		bigOut(part);
+		printf("\n");
 		// On current moment part >= second
 		int l = 0, r = BASE, x = 0;
 		BigNum	secondx,
@@ -273,7 +278,9 @@ BigNum bigDiv(BigNum first, BigNum second) {
 		secondx = bigMul(second, bigX);
 		old = part;
 		part = bigMinus(part, secondx);
-
+		printf("part after minus = ");
+		bigOut(part);
+		printf("\n");
 		bigFree(old);
 		bigFree(secondx);
 		bigFree(bigX);
