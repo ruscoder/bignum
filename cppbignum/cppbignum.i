@@ -15,6 +15,7 @@ public:
 	const Big operator -(Big &);
 	const Big operator *(Big &);
 	const Big operator /(Big &);
+	const Big operator %(Big &);
     
 	bool operator ==(const Big &);
 	bool operator <(const Big &);

@@ -43,8 +43,13 @@ const Big Big::operator -(Big &rightVal) {
 const Big Big::operator *(Big &rightVal) {
 	return Big(bigMul(num, rightVal.getNum()));
 }
+
 const Big Big::operator /(Big &rightVal) {
 	return Big(bigDiv(num, rightVal.getNum()));
+}
+
+const Big Big::operator %(Big &rightVal) {
+	return Big(bigMod(num, rightVal.getNum()));
 }
 
 bool Big::operator ==(const Big &second) {
