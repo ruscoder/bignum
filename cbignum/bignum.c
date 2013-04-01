@@ -16,7 +16,6 @@
 #define OUT_FORMAT "%.1d"
 
 
-
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 int newObjectsCount = 0,
@@ -37,7 +36,7 @@ BigNum bigNewNum(int len) {
 
 void bigFree(BigNum num) {
 	delObjectsCount++;
-	free(num.digits);
+	//free(num.digits);
 }
 
 void bigVersion() {
@@ -51,15 +50,6 @@ BigNum bigCopy(BigNum src) {
 	return res;
 }
 
-BigNum bigCopyPart(BigNum src, int start, int len) {
-	// Copy part of BigNum in BigEndian 
-	// from start to start + len
-	// (12345, 0, 2) = 12
-	BigNum res = bigNewNum(len);
-	int pos = src.len - start - len;
-	memcpy(res.digits, src.digits + pos * sizeof(int), len * sizeof(int));	
-	return res;
-}
 
 void bigExtend(BigNum *src, int len) {
 	BigNum new = bigNewNum(src->len + len);
@@ -240,22 +230,41 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	BigNum part = bigFromInt(0); 
 	while (pos < first.len) {
 		// Extend if < to eq len
+		int borrow = 0;
 		if (part.len < second.len) {
-			int extLen = second.len - part.len;
-			bigExtend(&part, extLen);
-			int i;
-			for (i = 0; i < extLen; ++i, ++pos) {
-				part.digits[extLen - 1 - i] = first.digits[first.len - pos - 1];
+			int i,
+				extLen = second.len - part.len;
+			if (part.len == 0) {
+				if (posSecond != res.len - 1) {
+					posSecond--;
+					printf("posSec--\n");
+				}
+				for (i = first.len - 1 - pos; i >= 0; --i) {
+					printf("AA = %d\n", first.digits[i]);
+					if (first.digits[i] == 0) {
+						extLen++;
+						posSecond--;
+					} else {
+						break;
+					}
+				}
 			}
+			printf("extended, extLen=%d and partlen=%d\n",extLen,part.len);
+			borrow = extLen;
+			bigExtend(&part, extLen);
+			for (i = 0; i < extLen; ++i, ++pos) {
+				part.digits[extLen - 1 - i] = first.digits[first.len - 1 - pos];
+			}
+			part = removeLeadNulls(part);
 		}
 		if (bigCmp(part, second) == -1) {
 			// part < second
+			posSecond -= borrow;
+			printf("EXT =%d\n");
 			bigExtend(&part, 1);
 			part.digits[0] = first.digits[first.len - pos - 1];
 			pos++;
 		}
-		bigOut(part);
-		printf("\n");
 		// On current moment part >= second
 		int l = 0, r = BASE, x = 0;
 		BigNum	secondx,
@@ -274,11 +283,15 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			}
 			bigFree(secondx);
 		}
+		printf("x=%d\n",x);
 		BigNum bigX = bigFromInt(x);
+		printf("part =");
+		bigOut(part);
+		printf("\n");
 		secondx = bigMul(second, bigX);
 		old = part;
 		part = bigMinus(part, secondx);
-		printf("part after minus = ");
+		printf("part =");
 		bigOut(part);
 		printf("\n");
 		bigFree(old);
