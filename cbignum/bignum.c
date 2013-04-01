@@ -270,7 +270,6 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	}
 	BigNum res = bigNewNum(first.len - second.len + 1);
 	int pos = 0,
-		posSecond = res.len - 1,
 		leadNulls = true; 
 	BigNum part = bigNewNum(second.len + 1); 
 	part.len = 0;
@@ -301,11 +300,11 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			leadNulls = false;
 		// Remove lead nulls
 		if (!leadNulls)
-			res.digits[posSecond--] = x;
+			res.digits[pos] = x;
 		
 	}
 	bigFree(part);
-	return res;
+	return removeLeadNulls(res);
 }
 
 int bigCmp(BigNum first, BigNum second) {
