@@ -27,6 +27,7 @@ BigNum bigNewNum(int len) {
 	newObjectsCount++;
 	BigNum res;
 	res.len = len;
+	res.allocated = len;
 	res.digits = calloc(len, sizeof(int)); 
 	if (res.digits == NULL) {
 		printf("Cannot allocate memory.\n");
@@ -52,11 +53,17 @@ BigNum bigCopy(BigNum src) {
 }
 
 
-void bigExtend(BigNum *src, int len) {
-	BigNum new = bigNewNum(src->len + len);
-	memcpy(new.digits + len, src->digits, src->len * sizeof(int));
-	bigFree(*src);
-	*src = new;
+void bigExtend(BigNum *src, int num) {
+	src->len++;
+	if (src->len > src->allocated) {
+		printf("Wrong using of bigExtend!\n");
+		exit(1);
+	}
+	int i;
+	for (i = src->len - 1; i >= 1; --i) {
+		src->digits[i] = src->digits[i - 1];
+	}
+	src->digits[0] = num;
 }
 
 
@@ -197,6 +204,23 @@ BigNum bigMinus(BigNum first, BigNum second) {
 	return res;
 }
 
+void bigMinusFromFirst(BigNum *first, BigNum second) {
+	// A >= B always
+	int i;
+	for (i = 0; i < first->len; ++i) {
+		int cur = first->digits[i];
+		if (i < second.len) {
+			if (cur < second.digits[i]) {
+				cur += BASE;
+				first->digits[i + 1]--;
+			}
+			cur -= second.digits[i];
+		}
+		first->digits[i] = cur;
+	}	
+	
+	*first = removeLeadNulls(*first);
+}
 
 BigNum bigMul(BigNum first, BigNum second) {
 	BigNum res = bigNewNum(first.len + second.len);
@@ -216,10 +240,29 @@ BigNum bigMul(BigNum first, BigNum second) {
 			cur = divRes.quot; // div
 		}
 	}
-	res = removeLeadNulls(res);	
-	return res;
+	return removeLeadNulls(res);	
 }
- 
+
+BigNum bigMulOnInt(BigNum first, int second) {
+	// Compute len of second
+	int len = 1;
+	if (second >= BASE)
+		len = ceil(floor(log10(second) + 1) / DIGITSD);	
+	BigNum res = bigNewNum(first.len + len);
+	int i;
+	for (i = 0; i < first.len; ++i) {
+		long long cur = first.digits[i] * second; 
+		int j;
+		for (j = 0; cur; ++j) {
+			cur += res.digits[i + j];
+			lldiv_t divRes = lldiv(cur, BASE);
+			res.digits[i + j] = divRes.rem; // %
+			cur = divRes.quot; // div
+		}
+	}
+	return removeLeadNulls(res);	
+}
+
 BigNum bigDiv(BigNum first, BigNum second) {
 	// TODO: second == 0
 	if (bigCmp(first, second) == -1) {
@@ -229,22 +272,19 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	int pos = 0,
 		posSecond = res.len - 1,
 		leadNulls = true; 
-	BigNum part = bigFromInt(0); 
+	BigNum part = bigNewNum(second.len + 1); 
+	part.len = 0;
 	for (pos = first.len - 1; pos >= 0; --pos) {
 		// Extend 
-		bigExtend(&part, 1);
-		part.digits[0] = first.digits[pos];
+		bigExtend(&part, first.digits[pos]);
 		int l = 0, 
 			r = BASE, 
 			x = 0;
-		BigNum	secondx,
-				old;
+		BigNum	secondx;
 		while (l <= r) {
 			int m = (l + r) >> 1;
 			// Search x: second*x <= part
-			BigNum bigM = bigFromInt(m);
-			secondx = bigMul(second, bigM);
-			bigFree(bigM);
+			secondx = bigMulOnInt(second, m);
 			if (bigCmp(secondx, part) <= 0) {
 				x = m;
 				l = m + 1;
@@ -253,15 +293,13 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			}
 			bigFree(secondx);
 		}
-		BigNum bigX = bigFromInt(x);
-		secondx = bigMul(second, bigX);
-		old = part;
-		part = bigMinus(part, secondx);
-		bigFree(old);
+		secondx = bigMulOnInt(second, x);
+		bigMinusFromFirst(&part, secondx);
 		bigFree(secondx);
-		bigFree(bigX);
+		// Before first null
 		if (x > 0)
 			leadNulls = false;
+		// Remove lead nulls
 		if (!leadNulls)
 			res.digits[posSecond--] = x;
 		
