@@ -264,9 +264,13 @@ BigNum bigMulOnInt(BigNum first, int second) {
 }
 
 BigNum bigDiv(BigNum first, BigNum second) {
-	// TODO: second == 0
 	if (bigCmp(first, second) == -1) {
 		return bigFromInt(0);
+	}
+	// if second == 0
+	if (second.len == 0) {
+		printf("Division by zero.");
+		exit(1);
 	}
 	BigNum res = bigNewNum(first.len - second.len + 1);
 	int pos = 0,
