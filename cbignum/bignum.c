@@ -14,7 +14,8 @@
 #define DIGITS 1
 #define DIGITSD 1.
 #define OUT_FORMAT "%.1d"
-
+#define false 0
+#define true 1
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -36,7 +37,7 @@ BigNum bigNewNum(int len) {
 
 void bigFree(BigNum num) {
 	delObjectsCount++;
-	//free(num.digits);
+	free(num.digits);
 }
 
 void bigVersion() {
@@ -226,47 +227,16 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	}
 	BigNum res = bigNewNum(first.len - second.len + 1);
 	int pos = 0,
-		posSecond = res.len - 1; 
+		posSecond = res.len - 1,
+		leadNulls = true; 
 	BigNum part = bigFromInt(0); 
-	while (pos < first.len) {
-		// Extend if < to eq len
-		int borrow = 0;
-		if (part.len < second.len) {
-			int i,
-				extLen = second.len - part.len;
-			if (part.len == 0) {
-				if (posSecond != res.len - 1) {
-					posSecond--;
-					printf("posSec--\n");
-				}
-				for (i = first.len - 1 - pos; i >= 0; --i) {
-					printf("AA = %d\n", first.digits[i]);
-					if (first.digits[i] == 0) {
-						extLen++;
-						posSecond--;
-					} else {
-						break;
-					}
-				}
-			}
-			printf("extended, extLen=%d and partlen=%d\n",extLen,part.len);
-			borrow = extLen;
-			bigExtend(&part, extLen);
-			for (i = 0; i < extLen; ++i, ++pos) {
-				part.digits[extLen - 1 - i] = first.digits[first.len - 1 - pos];
-			}
-			part = removeLeadNulls(part);
-		}
-		if (bigCmp(part, second) == -1) {
-			// part < second
-			posSecond -= borrow;
-			printf("EXT =%d\n");
-			bigExtend(&part, 1);
-			part.digits[0] = first.digits[first.len - pos - 1];
-			pos++;
-		}
-		// On current moment part >= second
-		int l = 0, r = BASE, x = 0;
+	for (pos = first.len - 1; pos >= 0; --pos) {
+		// Extend 
+		bigExtend(&part, 1);
+		part.digits[0] = first.digits[pos];
+		int l = 0, 
+			r = BASE, 
+			x = 0;
 		BigNum	secondx,
 				old;
 		while (l <= r) {
@@ -283,25 +253,21 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			}
 			bigFree(secondx);
 		}
-		printf("x=%d\n",x);
 		BigNum bigX = bigFromInt(x);
-		printf("part =");
-		bigOut(part);
-		printf("\n");
 		secondx = bigMul(second, bigX);
 		old = part;
 		part = bigMinus(part, secondx);
-		printf("part =");
-		bigOut(part);
-		printf("\n");
 		bigFree(old);
 		bigFree(secondx);
 		bigFree(bigX);
-		res.digits[posSecond--] = x;
+		if (x > 0)
+			leadNulls = false;
+		if (!leadNulls)
+			res.digits[posSecond--] = x;
 		
 	}
 	bigFree(part);
-	return removeLeadNulls(res);
+	return res;
 }
 
 int bigCmp(BigNum first, BigNum second) {
