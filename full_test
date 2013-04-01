@@ -19,17 +19,17 @@ function check_res {
 
 function test_op {
 	echo Testing $1: 
-	python tester.py $FIRST "$1" $SECOND right_res
+	python tester.py $FIRST "$1" $SECOND right_res > /dev/null
 	# c
 	echo -n C module: 
-	./test_c $FIRST "$1" $SECOND res
+	./test_c $FIRST "$1" $SECOND res > /dev/null
 	check_res
 	# c++
 	echo -n C++ module: 
-	./test_cpp $FIRST "$1" $SECOND res
+	./test_cpp $FIRST "$1" $SECOND res > /dev/null
 	check_res
 	echo -n Py Module:
-	./test_py.py $FIRST "$1" $SECOND res
+	./test_py.py $FIRST "$1" $SECOND res > /dev/null
 	check_res
 }
 
@@ -37,6 +37,7 @@ echo Tester program
 test_op "+"
 test_op "-"
 test_op "*"
+test_op "/"
 rm right_res
 rm res
 

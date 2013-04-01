@@ -26,10 +26,13 @@ int main(int argc, char **argv) {
 		res = bigPlus(a, b);	
 		break;
 	case '-':
-		res = bigMinus(a, b);	
+		res = bigMinus(a, b);
 		break;
 	case '*':
 		res = bigMul(a, b);	
+		break;
+	case '/':
+		res = bigDiv(a, b);	
 		break;
 		
 	}
@@ -38,5 +41,6 @@ int main(int argc, char **argv) {
 	bigFree(b);
 	bigFree(res);
 	
+	bigVersion();
 	return 0;
 }

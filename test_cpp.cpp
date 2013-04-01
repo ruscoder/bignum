@@ -30,6 +30,9 @@ int main(int argc, char **argv) {
 	case '*':
 		res = a * b;
 		break;
+	case '/':
+		res = a / b;
+		break;
 		
 	}
 	res.toFile(argv[4]);
