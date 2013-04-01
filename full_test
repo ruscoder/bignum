@@ -38,6 +38,7 @@ test_op "+"
 test_op "-"
 test_op "*"
 test_op "/"
+test_op "%"
 rm right_res
 rm res
 

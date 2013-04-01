@@ -34,6 +34,9 @@ int main(int argc, char **argv) {
 	case '/':
 		res = bigDiv(a, b);	
 		break;
+	case '%':
+		res = bigMod(a, b);	
+		break;
 		
 	}
 	bigToFile(argv[4], res);
