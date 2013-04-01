@@ -32,19 +32,52 @@ const BigNum &Big::getNum() const {
 	return num;
 }
 
-const Big Big::operator +(Big& rightVal) {
+const Big Big::operator +(Big &rightVal) {
 	return Big(bigPlus(num, rightVal.getNum()));
 }
 
-const Big Big::operator -(Big& rightVal) {
+const Big Big::operator -(Big &rightVal) {
 	return Big(bigMinus(num, rightVal.getNum()));
 }
 
-const Big Big::operator *(Big& rightVal) {
+const Big Big::operator *(Big &rightVal) {
 	return Big(bigMul(num, rightVal.getNum()));
 }
-const Big Big::operator /(Big& rightVal) {
+const Big Big::operator /(Big &rightVal) {
 	return Big(bigDiv(num, rightVal.getNum()));
+}
+
+bool Big::operator ==(const Big &second) {
+	if (bigCmp(second.getNum(), num) == 0) 
+		return true;
+	else
+		return false;
+}
+
+bool Big::operator >(const Big &second) {
+	if (bigCmp(num, second.getNum()) == 1) 
+		return true;
+	else
+		return false;
+}
+
+bool Big::operator <(const Big &second) {
+	if (bigCmp(num, second.getNum()) == -1) 
+		return true;
+	else
+		return false;
+}
+bool Big::operator <=(const Big &second) {
+	if (bigCmp(num, second.getNum()) <= 0) 
+		return true;
+	else
+		return false;
+}
+bool Big::operator >=(const Big &second) {
+	if (bigCmp(num, second.getNum()) >= 0) 
+		return true;
+	else
+		return false;
 }
 
 void Big::toFile(const char * fileName) {
