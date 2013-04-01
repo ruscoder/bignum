@@ -13,6 +13,7 @@ BigNum bigPlus(BigNum, BigNum);
 BigNum bigMinus(BigNum, BigNum);
 BigNum bigMul(BigNum, BigNum);
 BigNum bigDiv(BigNum, BigNum);
+BigNum bigMod(BigNum, BigNum);
 int bigCmp(BigNum, BigNum);
 
 

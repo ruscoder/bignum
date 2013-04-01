@@ -311,6 +311,44 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	return removeLeadNulls(res);
 }
 
+BigNum bigMod(BigNum first, BigNum second) {
+	if (bigCmp(first, second) == -1) {
+		return bigCopy(first);
+	}
+	// if second == 0
+	if (second.len == 0) {
+		printf("Division by zero.");
+		exit(1);
+	}
+	int pos = 0;
+	BigNum part = bigNewNum(second.len + 1); 
+	part.len = 0;
+	for (pos = first.len - 1; pos >= 0; --pos) {
+		// Extend 
+		bigExtend(&part, first.digits[pos]);
+		int l = 0, 
+			r = BASE, 
+			x = 0;
+		BigNum	secondx;
+		while (l <= r) {
+			int m = (l + r) >> 1;
+			// Search x: second*x <= part
+			secondx = bigMulOnInt(second, m);
+			if (bigCmp(secondx, part) <= 0) {
+				x = m;
+				l = m + 1;
+			} else {
+				r = m - 1;
+			}
+			bigFree(secondx);
+		}
+		secondx = bigMulOnInt(second, x);
+		bigMinusFromFirst(&part, secondx);
+		bigFree(secondx);
+	}
+	return removeLeadNulls(part);
+}
+
 int bigCmp(BigNum first, BigNum second) {
 	/** returns: 
 	 -1 - first < second
