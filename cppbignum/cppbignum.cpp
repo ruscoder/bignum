@@ -43,6 +43,9 @@ const Big Big::operator -(Big& rightVal) {
 const Big Big::operator *(Big& rightVal) {
 	return Big(bigMul(num, rightVal.getNum()));
 }
+const Big Big::operator /(Big& rightVal) {
+	return Big(bigDiv(num, rightVal.getNum()));
+}
 
 void Big::toFile(const char * fileName) {
 	bigToFile(fileName, num);

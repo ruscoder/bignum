@@ -10,10 +10,10 @@ MAIN: cppbignum.o cppbignum_wrap.o
 	$(CC) $(DBG) cppbignum_wrap.o cppbignum.o -shared -fPIC -L. -lbignum -Wl,-rpath,. -o _cppbignum.so
 
 
-cppbignum_wrap.o: cppbignum_wrap.cxx
+cppbignum_wrap.o: cppbignum_wrap.cxx 
 	$(CC) $(DBG) -fPIC -c cppbignum.cpp cppbignum_wrap.cxx -I$(PY_INCLUDE_PATH)
 
-cppbignum_wrap.cxx: cppbignum.i
+cppbignum_wrap.cxx: cppbignum.i cppbignum.o
 	# Compile c++ wrapper for py 
 	swig -c++ -python cppbignum.i
 

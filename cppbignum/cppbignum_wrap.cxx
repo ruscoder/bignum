@@ -3324,6 +3324,40 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Big___div__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Big *arg1 = (Big *) 0 ;
+  Big *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  SwigValueWrapper< Big > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Big___div__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Big___div__" "', argument " "1"" of type '" "Big *""'"); 
+  }
+  arg1 = reinterpret_cast< Big * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_Big,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Big___div__" "', argument " "2"" of type '" "Big &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Big___div__" "', argument " "2"" of type '" "Big &""'"); 
+  }
+  arg2 = reinterpret_cast< Big * >(argp2);
+  result = (arg1)->operator /(*arg2);
+  resultobj = SWIG_NewPointerObj((new Big(static_cast< const Big& >(result))), SWIGTYPE_p_Big, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   BigNum *arg1 = 0 ;
@@ -3483,6 +3517,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Big___add__", _wrap_Big___add__, METH_VARARGS, NULL},
 	 { (char *)"Big___sub__", _wrap_Big___sub__, METH_VARARGS, NULL},
 	 { (char *)"Big___mul__", _wrap_Big___mul__, METH_VARARGS, NULL},
+	 { (char *)"Big___div__", _wrap_Big___div__, METH_VARARGS, NULL},
 	 { (char *)"new_Big", _wrap_new_Big, METH_VARARGS, NULL},
 	 { (char *)"Big_getNum", _wrap_Big_getNum, METH_VARARGS, NULL},
 	 { (char *)"Big_toFile", _wrap_Big_toFile, METH_VARARGS, NULL},

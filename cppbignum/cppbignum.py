@@ -78,6 +78,7 @@ class Big(_object):
     def __add__(self, *args): return _cppbignum.Big___add__(self, *args)
     def __sub__(self, *args): return _cppbignum.Big___sub__(self, *args)
     def __mul__(self, *args): return _cppbignum.Big___mul__(self, *args)
+    def __div__(self, *args): return _cppbignum.Big___div__(self, *args)
     def __init__(self, *args): 
         this = _cppbignum.new_Big(*args)
         try: self.this.append(this)
