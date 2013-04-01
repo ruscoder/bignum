@@ -17,6 +17,7 @@ int bigCmp(BigNum, BigNum);
 
 
 BigNum bigCopy(BigNum);
-BigNum bigCopyPart(BigNum, int, int);
 void bigExtend(BigNum *, int);
+void bigVersion(); 
+void bigOut(BigNum); 
 

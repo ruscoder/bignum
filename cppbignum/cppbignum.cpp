@@ -85,5 +85,5 @@ void Big::toFile(const char * fileName) {
 }
 
 void Big::out() {
-	//bigPrint(num);
+	bigOut(num);
 }
