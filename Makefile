@@ -2,7 +2,7 @@
 
 CC = gcc
 CFLAGS = -c
-DBG =
+DBG = -Wall -ggdb
 MAKE = make
 
 MAIN: depends test_c.o test_cpp.o 

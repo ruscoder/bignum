@@ -2,13 +2,13 @@
 
 CC=gcc
 CFLAGS=-c
-
+DBG = -ggdb -Wall
 MAIN:  bignum.o 
-	$(CC) -shared -o libbignum.so bignum.o
+	$(CC) $(DBG) -shared -o libbignum.so bignum.o
 
 
 bignum.o: bignum.c
-	$(CC) $(CFLAGS) -fPIC bignum.c
+	$(CC) $(DBG) $(CFLAGS) -fPIC bignum.c
 
 clean:
 	rm -f *.o
