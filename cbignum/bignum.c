@@ -342,10 +342,12 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	return removeLeadNulls(res);
 }
 BigNum bigMod(BigNum first, BigNum second) {
-	// a%b=a, if a<b (not signed) 
-	// signed first is separately 
-	if (bigCmpUnsigned(first, second) == -1 && !first.sign && !second.sign) {
-		return bigCopy(first);
+	// optimized a%b=a, if a<b (if not signed)
+
+	if (!first.sign && !second.sign) {	
+		if (bigCmpUnsigned(first, second) == -1) { 
+			return bigCopy(first);
+		}
 	}
 	// if second == 0
 	if (second.len == 0) {
