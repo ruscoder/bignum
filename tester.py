@@ -19,7 +19,7 @@ elif op == "-":
 elif op == "*":
 	res = first * second
 elif op == "/":
-	res = first / second
+	res = int(first / (second + 0.0))
 elif op == "%":
 	res = first % second
 
