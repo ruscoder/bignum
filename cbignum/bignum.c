@@ -5,15 +5,17 @@
 #include <string.h>
 #include <ctype.h>
 
-/*#define BASE 1000 * 1000 * 100
+#define BASE 1000 * 1000 * 100
 #define DIGITS 8
 #define DIGITSD 8.
 #define OUT_FORMAT "%.8d"
-*/
+/*
 #define BASE 10
 #define DIGITS 1
 #define DIGITSD 1.
 #define OUT_FORMAT "%.1d"
+*/
+
 #define false 0
 #define true 1
 
@@ -28,6 +30,8 @@ BigNum bigNewNum(int len) {
 	BigNum res;
 	res.len = len;
 	res.allocated = len;
+	// Positive
+	res.sign = 0;
 	res.digits = calloc(len, sizeof(int)); 
 	if (res.digits == NULL) {
 		printf("Cannot allocate memory.\n");
@@ -80,11 +84,18 @@ BigNum removeLeadNulls(BigNum num) {
 }
 
 BigNum bigFromInt(int num) {
+	// Compute len
 	int len = 1;
 	if (num >= BASE)
-		len = ceil(floor(log10(num) + 1) / DIGITSD);	
+		len = ceil( floor( log10(abs(num)) + 1) / DIGITSD);	
 
 	BigNum res = bigNewNum(len);
+	// Negative nums
+	if (num < 0) {
+		num = -num;
+		res.sign = 1;
+	}
+	// Parse
 	int i = 0;
 	while (num) {
 		div_t divRes = div(num, BASE);
@@ -144,6 +155,9 @@ void bigToFile(const char *name, BigNum first) {
 	if (first.len == 0) {
 		fprintf(fp, "0");
 	} else {
+		if (first.sign) {
+			fprintf(fp, "-");
+		}
 		int i;
 		fprintf(fp, "%d", first.digits[first.len - 1]);
 		for (i = first.len - 2; i >= 0; --i) {
@@ -157,6 +171,9 @@ void bigOut(BigNum first) {
 	if (first.len == 0) {
 		printf("0");
 	} else {
+		if (first.sign) {
+			printf("-");
+		}
 		int i;
 		printf("%d", first.digits[first.len - 1]);
 		for (i = first.len - 2; i >= 0; --i) {
@@ -224,12 +241,14 @@ void bigMinusFromFirst(BigNum *first, BigNum second) {
 
 BigNum bigMul(BigNum first, BigNum second) {
 	BigNum res = bigNewNum(first.len + second.len);
+	// Select sign
+	res.sign = first.sign ^ second.sign;  
 	int i;
 	for (i = 0; i < first.len; ++i) {
-		long long cur = 0;
+		unsigned long long cur = 0;
 		int j;
 		for (j = 0; j < second.len || cur; ++j) {
-			long long mul = first.digits[i];
+			unsigned long long mul = first.digits[i];
 			if (j < second.len)
 				mul *= second.digits[j];
 			else
@@ -251,7 +270,7 @@ BigNum bigMulOnInt(BigNum first, int second) {
 	BigNum res = bigNewNum(first.len + len);
 	int i;
 	for (i = 0; i < first.len; ++i) {
-		long long cur = first.digits[i] * second; 
+		unsigned long long cur = (unsigned long long)first.digits[i] * second; 
 		int j;
 		for (j = 0; cur; ++j) {
 			cur += res.digits[i + j];
@@ -273,6 +292,8 @@ BigNum bigDiv(BigNum first, BigNum second) {
 		exit(1);
 	}
 	BigNum res = bigNewNum(first.len - second.len + 1);
+	// Select sign
+	res.sign = first.sign ^ second.sign;  
 	int pos = 0,
 		leadNulls = true; 
 	BigNum part = bigNewNum(second.len + 1); 
@@ -287,7 +308,7 @@ BigNum bigDiv(BigNum first, BigNum second) {
 		while (l <= r) {
 			int m = (l + r) >> 1;
 			// Search x: second*x <= part
-			secondx = bigMulOnInt(second, m);
+			secondx = bigMul(second, bigFromInt(m));
 			if (bigCmp(secondx, part) <= 0) {
 				x = m;
 				l = m + 1;
@@ -310,7 +331,9 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	bigFree(part);
 	return removeLeadNulls(res);
 }
+//-12%-12 = -(12%12) if first and second < 0
 
+//second -first % second = -first%second, if first < 0
 BigNum bigMod(BigNum first, BigNum second) {
 	if (bigCmp(first, second) == -1) {
 		return bigCopy(first);

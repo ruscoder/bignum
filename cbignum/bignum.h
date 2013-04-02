@@ -1,5 +1,6 @@
 typedef struct __BigNum {
 	int *digits;
+	char sign;
 	int len;
 	int allocated;
 } BigNum;
