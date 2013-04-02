@@ -342,8 +342,9 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	return removeLeadNulls(res);
 }
 BigNum bigMod(BigNum first, BigNum second) {
-	// a%b=a, if a<b (not signed)
-	if (bigCmpUnsigned(first, second) == -1) {
+	// a%b=a, if a<b (not signed) 
+	// signed first is separately 
+	if (bigCmpUnsigned(first, second) == -1 && !first.sign && !second.sign) {
 		return bigCopy(first);
 	}
 	// if second == 0
@@ -391,6 +392,7 @@ BigNum bigMod(BigNum first, BigNum second) {
 	part.sign = second.sign;
 	return removeLeadNulls(part);
 }
+
 // Signed cmp
 int bigCmp(BigNum first, BigNum second) {
 	int res = bigCmpUnsigned(first, second);
