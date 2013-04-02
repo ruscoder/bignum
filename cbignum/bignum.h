@@ -16,6 +16,7 @@ BigNum bigMul(BigNum, BigNum);
 BigNum bigDiv(BigNum, BigNum);
 BigNum bigMod(BigNum, BigNum);
 int bigCmp(BigNum, BigNum);
+int bigCmpUnsigned(BigNum, BigNum);
 
 
 BigNum bigCopy(BigNum);

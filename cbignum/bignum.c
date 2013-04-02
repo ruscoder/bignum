@@ -53,6 +53,8 @@ void bigVersion() {
 BigNum bigCopy(BigNum src) {
 	BigNum res = bigNewNum(src.len);
 	memcpy(res.digits, src.digits, sizeof(int) * src.len);
+	res.allocated = src.allocated;
+	res.sign = src.sign;
 	return res;
 }
 
@@ -114,13 +116,19 @@ BigNum bigFromFile(const char *name) {
 		printf("Cannot open file %s\n", name);
 		exit(1);
 	}
-
+	
+	// Get sign (first byte)
+	char signBuf;
+	fread(&signBuf, 1, 1, fp);
+	int sign = (signBuf == '-'); // 0 or 1
 	// Get file size
 	fseek(fp, 0L, SEEK_END);
-	int size = ftell(fp);
+	int size = ftell(fp) - sign;
 	res = bigNewNum(ceil(size / DIGITSD));
+	// Set sign
+	res.sign = sign;
 	// Seek to start
-	fseek(fp, 0l, SEEK_SET);
+	fseek(fp, sign, SEEK_SET);
 	// Read file
 	char buf[DIGITS + 1];
 	int i, 
@@ -155,6 +163,7 @@ void bigToFile(const char *name, BigNum first) {
 	if (first.len == 0) {
 		fprintf(fp, "0");
 	} else {
+		// Put sign
 		if (first.sign) {
 			fprintf(fp, "-");
 		}
@@ -283,7 +292,8 @@ BigNum bigMulOnInt(BigNum first, int second) {
 }
 
 BigNum bigDiv(BigNum first, BigNum second) {
-	if (bigCmp(first, second) == -1) {
+	// 0 if a < b (nor=t signed)	
+	if (bigCmpUnsigned(first, second) == -1) {
 		return bigFromInt(0);
 	}
 	// if second == 0
@@ -308,8 +318,8 @@ BigNum bigDiv(BigNum first, BigNum second) {
 		while (l <= r) {
 			int m = (l + r) >> 1;
 			// Search x: second*x <= part
-			secondx = bigMul(second, bigFromInt(m));
-			if (bigCmp(secondx, part) <= 0) {
+			secondx = bigMulOnInt(second, m);
+			if (bigCmpUnsigned(secondx, part) <= 0) {
 				x = m;
 				l = m + 1;
 			} else {
@@ -331,11 +341,9 @@ BigNum bigDiv(BigNum first, BigNum second) {
 	bigFree(part);
 	return removeLeadNulls(res);
 }
-//-12%-12 = -(12%12) if first and second < 0
-
-//second -first % second = -first%second, if first < 0
 BigNum bigMod(BigNum first, BigNum second) {
-	if (bigCmp(first, second) == -1) {
+	// a%b=a, if a<b (not signed)
+	if (bigCmpUnsigned(first, second) == -1) {
 		return bigCopy(first);
 	}
 	// if second == 0
@@ -343,9 +351,11 @@ BigNum bigMod(BigNum first, BigNum second) {
 		printf("Division by zero.");
 		exit(1);
 	}
-	int pos = 0;
+	
 	BigNum part = bigNewNum(second.len + 1); 
+	// Part = 0
 	part.len = 0;
+	int pos = 0;
 	for (pos = first.len - 1; pos >= 0; --pos) {
 		// Extend 
 		bigExtend(&part, first.digits[pos]);
@@ -357,7 +367,7 @@ BigNum bigMod(BigNum first, BigNum second) {
 			int m = (l + r) >> 1;
 			// Search x: second*x <= part
 			secondx = bigMulOnInt(second, m);
-			if (bigCmp(secondx, part) <= 0) {
+			if (bigCmpUnsigned(secondx, part) <= 0) {
 				x = m;
 				l = m + 1;
 			} else {
@@ -369,10 +379,32 @@ BigNum bigMod(BigNum first, BigNum second) {
 		bigMinusFromFirst(&part, secondx);
 		bigFree(secondx);
 	}
+	// Select sign and modify result
+	// a < 0 and b > 0 OR a > 0 and b < 0
+	if (first.sign ^ second.sign) {
+		// part = second - part and sign = +
+		BigNum old = part;
+		part = bigMinus(second, part);
+		bigFree(old);
+	}
+	// result sign such as b sign
+	part.sign = second.sign;
 	return removeLeadNulls(part);
 }
-
+// Signed cmp
 int bigCmp(BigNum first, BigNum second) {
+	int res = bigCmpUnsigned(first, second);
+	return res;
+	if (!first.sign && !second.sign) 
+		return -res;
+	if (res == 1 && first.sign && !second.sign) 
+		return -res;
+	if (res == -1 && !first.sign && second.sign) 
+		return -res;
+	return res;
+}
+
+int bigCmpUnsigned(BigNum first, BigNum second) {
 	/** returns: 
 	 -1 - first < second
 	  0 - equal
