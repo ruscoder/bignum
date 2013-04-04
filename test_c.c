@@ -37,6 +37,9 @@ int main(int argc, char **argv) {
 	case '%':
 		res = bigMod(a, b);	
 		break;
+	case '^':
+		res = bigPowMod(a, b, b);	
+		break;
 		
 	}
 	bigToFile(argv[4], res);
