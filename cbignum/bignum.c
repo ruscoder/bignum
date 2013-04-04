@@ -513,10 +513,18 @@ BigNum bigPowMod(BigNum first, BigNum second, BigNum module) {
 			old = res;
 			res = bigMul(res, cur);
 			bigFree(old);
+			// res = res % module
+			old = res;
+			res = bigMod(res, module);
+			bigFree(old);
 		} else {
 			// cur = cur * cur
 			old = cur;
 			cur = bigMul(cur, cur);
+			bigFree(old);
+			// cur = cur % module
+			old = cur;
+			cur = bigMod(cur, module);
 			bigFree(old);
 			// st = st / 2
 			old = st;
