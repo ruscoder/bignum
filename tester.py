@@ -25,6 +25,8 @@ elif op == "/":
 		res = first // second + 1 
 elif op == "%":
 	res = first % second
+elif op == "^":
+	res = first ** second
 
 
 # Write to res file
