@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import division
 import sys
 
 firstFile = open(sys.argv[1], "r+")
@@ -19,7 +20,9 @@ elif op == "-":
 elif op == "*":
 	res = first * second
 elif op == "/":
-	res = int(first / (second + 0.0))
+	res = first // second
+	if res < 0 and first % second != 0:
+		res = first // second  
 elif op == "%":
 	res = first % second
 
