@@ -27,6 +27,9 @@ BigNum bigMulOnInt(BigNum, int);
 BigNum bigDiv(BigNum, BigNum);
 BigNum bigDivOnInt(BigNum, int);
 
+BigNum bigPowMod(BigNum, BigNum, BigNum);
+
+
 BigNum bigMod(BigNum, BigNum);
 
 int bigCmp(BigNum, BigNum);

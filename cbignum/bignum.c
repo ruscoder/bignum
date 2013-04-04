@@ -200,6 +200,12 @@ BigNum bigNegative(BigNum num) {
 	return num;
 }
 
+int bigIsEven(BigNum num) {
+	if (num.digits[num.len - 1] % 2 == 0)
+		return 1;
+	return 0;
+}
+
 BigNum bigPlus(BigNum first, BigNum second) {
 	// a + (-b) = a - b
 	if (!first.sign && second.sign) {
@@ -482,6 +488,46 @@ BigNum bigMod(BigNum first, BigNum second) {
 	// result sign such as b sign
 	part.sign = second.sign;
 	return part;
+}
+
+
+BigNum bigPowMod(BigNum first, BigNum second, BigNum module) {
+	// Only second >= 0
+	if (second.sign) {
+		printf("BigPowMod only for b >= 0");
+		exit(1);
+	}
+	// a ^ 0 == 1
+	if (second.len == 0) {
+		return bigFromInt(1);
+	}
+	BigNum res = bigFromInt(1), 
+		cur = bigCopy(first),
+		one = bigFromInt(1),
+		st = bigCopy(second),
+		old;
+	while (st.len != 0) {
+		if (!bigIsEven(st)) {
+			bigMinusUnsignedFromFirst(&st, one);
+			// res *= cur
+			old = res;
+			res = bigMul(res, cur);
+			bigFree(old);
+		} else {
+			// cur = cur * cur
+			old = cur;
+			cur = bigMul(cur, cur);
+			bigFree(old);
+			// st = st / 2
+			old = st;
+			st = bigDivOnInt(st, 2);
+			bigFree(old);
+		}
+	}
+	bigFree(one);
+	bigFree(st);
+	bigFree(cur);
+	return res;
 }
 
 // Signed cmp
