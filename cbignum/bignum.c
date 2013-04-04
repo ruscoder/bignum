@@ -282,6 +282,7 @@ BigNum bigMinusUnsignedFromLargest(BigNum first, BigNum second) {
 	return res;
 }
 
+// For bigDiv functions
 void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 	// A >= B always
 	int i;
@@ -350,6 +351,32 @@ BigNum bigMulOnInt(BigNum first, int second) {
 	return removeLeadNulls(res);	
 }
 
+BigNum bigDivOnInt(BigNum first, int second) {
+	char secondSign = 0;
+	if (second < 0) {
+		second = -second;
+		secondSign = 1;
+	}
+	// Compute len of second
+	int len = 1;
+	if (second >= BASE)
+		len = ceil(floor(log10(second) + 1) / DIGITSD);	
+	BigNum res = bigNewNum(first.len - len + 1);
+	// Select sign
+	res.sign = first.sign ^ secondSign;  
+	int i;
+	long long cur = 0;
+	for (i = first.len - 1; i >= 0; --i) {
+		cur = cur * BASE + first.digits[i];
+		lldiv_t divRes = lldiv(cur, second);
+		res.digits[i] = divRes.quot; // div
+		cur = divRes.rem; // %
+	}
+	
+	return removeLeadNulls(res);
+}
+
+
 BigNum bigDiv(BigNum first, BigNum second) {
 	// 0 if a < b (nor=t signed)	
 	if (bigCmpUnsigned(first, second) == -1) {
@@ -389,17 +416,19 @@ BigNum bigDiv(BigNum first, BigNum second) {
 		secondx = bigMulOnInt(second, x);
 		bigMinusUnsignedFromFirst(&part, secondx);
 		bigFree(secondx);
-		// Before first null
-		if (x > 0)
+		// Before first null (set res.len)
+		if (x > 0 && leadNulls) {
 			leadNulls = false;
+			res.len = pos + 1;
+		}
 		// Remove lead nulls
 		if (!leadNulls)
 			res.digits[pos] = x;
-		
 	}
 	bigFree(part);
-	return removeLeadNulls(res);
+	return res;
 }
+
 BigNum bigMod(BigNum first, BigNum second) {
 	// optimized a%b=a, if a<b (if not signed)
 	if (!first.sign && !second.sign) {	
