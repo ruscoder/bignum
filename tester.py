@@ -22,7 +22,7 @@ elif op == "*":
 elif op == "/":
 	res = first // second
 	if res < 0 and first % second != 0:
-		res = first // second  
+		res = first // second + 1 
 elif op == "%":
 	res = first % second
 
