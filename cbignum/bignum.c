@@ -1,3 +1,7 @@
+/* TODO
+ * Make comments documentation 
+ */
+ 
 #include "bignum.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -191,7 +195,31 @@ void bigOut(BigNum first) {
 	}
 }
 
+BigNum bigNegative(BigNum num) {
+	num.sign = !num.sign;
+	return num;
+}
+
 BigNum bigPlus(BigNum first, BigNum second) {
+	// a + (-b) = a - b
+	if (!first.sign && second.sign) {
+		return bigMinusUnsigned(first, second);
+	}
+	// (-a) + b = b - a
+	if (first.sign && !second.sign) {
+		return bigMinusUnsigned(second, first);
+	}
+	// (-a) + (-b) = -(a + b)
+	if (first.sign && second.sign) {
+		return bigNegative(bigPlusUnsigned(first, second));
+	}
+	// Default a + b
+	return bigPlusUnsigned(first, second);
+}
+
+
+
+BigNum bigPlusUnsigned(BigNum first, BigNum second) {
 	BigNum res = bigNewNum(MAX(first.len, second.len) + 1);
 	int i;
 	unsigned int cur = 0;
@@ -211,6 +239,30 @@ BigNum bigPlus(BigNum first, BigNum second) {
 }
 
 BigNum bigMinus(BigNum first, BigNum second) {
+	// a - (-b) = a + b
+	if (!first.sign && second.sign) {
+		return bigPlusUnsigned(first, second);
+	}
+	// (-a) - b = -(a + b)
+	if (first.sign && !second.sign) {
+		return bigNegative(bigPlusUnsigned(second, first));
+	}
+	// (-a) - (-b) = (-a) + b = b - a
+	if (first.sign && second.sign) {
+		return bigMinusUnsigned(second, first);
+	}
+	// Default a - b
+	return bigMinusUnsigned(first, second);
+}
+
+BigNum bigMinusUnsigned(BigNum first, BigNum second) {
+	if (bigCmpUnsigned(first, second) == -1) {
+		return bigNegative(bigMinusUnsignedFromLargest(second, first));
+	}
+	return bigMinusUnsignedFromLargest(first, second);
+}
+
+BigNum bigMinusUnsignedFromLargest(BigNum first, BigNum second) {
 	// A >= B always
 	BigNum res = bigNewNum(MAX(first.len, second.len));
 	int i;
@@ -230,7 +282,7 @@ BigNum bigMinus(BigNum first, BigNum second) {
 	return res;
 }
 
-void bigMinusFromFirst(BigNum *first, BigNum second) {
+void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 	// A >= B always
 	int i;
 	for (i = 0; i < first->len; ++i) {
@@ -272,11 +324,18 @@ BigNum bigMul(BigNum first, BigNum second) {
 }
 
 BigNum bigMulOnInt(BigNum first, int second) {
+	char secondSign = 0;
+	if (second < 0) {
+		second = -second;
+		secondSign = 1;
+	}
 	// Compute len of second
 	int len = 1;
 	if (second >= BASE)
 		len = ceil(floor(log10(second) + 1) / DIGITSD);	
 	BigNum res = bigNewNum(first.len + len);
+	// Select sign
+	res.sign = first.sign ^ secondSign;  
 	int i;
 	for (i = 0; i < first.len; ++i) {
 		unsigned long long cur = (unsigned long long)first.digits[i] * second; 
@@ -328,7 +387,7 @@ BigNum bigDiv(BigNum first, BigNum second) {
 			bigFree(secondx);
 		}
 		secondx = bigMulOnInt(second, x);
-		bigMinusFromFirst(&part, secondx);
+		bigMinusUnsignedFromFirst(&part, secondx);
 		bigFree(secondx);
 		// Before first null
 		if (x > 0)
@@ -343,7 +402,6 @@ BigNum bigDiv(BigNum first, BigNum second) {
 }
 BigNum bigMod(BigNum first, BigNum second) {
 	// optimized a%b=a, if a<b (if not signed)
-
 	if (!first.sign && !second.sign) {	
 		if (bigCmpUnsigned(first, second) == -1) { 
 			return bigCopy(first);
@@ -379,20 +437,22 @@ BigNum bigMod(BigNum first, BigNum second) {
 			bigFree(secondx);
 		}
 		secondx = bigMulOnInt(second, x);
-		bigMinusFromFirst(&part, secondx);
+		bigMinusUnsignedFromFirst(&part, secondx);
 		bigFree(secondx);
 	}
+	part = removeLeadNulls(part);
 	// Select sign and modify result
+	// part != 0 !!!
 	// a < 0 and b > 0 OR a > 0 and b < 0
-	if (first.sign ^ second.sign) {
-		// part = second - part and sign = +
+	if (part.len != 0 && first.sign ^ second.sign) {
+		// part = second - part 
 		BigNum old = part;
-		part = bigMinus(second, part);
+		part = bigMinusUnsigned(second, part);
 		bigFree(old);
 	}
 	// result sign such as b sign
 	part.sign = second.sign;
-	return removeLeadNulls(part);
+	return part;
 }
 
 // Signed cmp

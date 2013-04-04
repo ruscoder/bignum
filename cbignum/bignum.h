@@ -10,8 +10,15 @@ void bigFree(BigNum);
 
 BigNum bigFromFile(const char *);
 void bigToFile(const char *, BigNum);
+BigNum bigNegative(BigNum);
+
+BigNum bigPlusUnsigned(BigNum, BigNum);
 BigNum bigPlus(BigNum, BigNum);
+
+BigNum bigMinusUnsignedFromLargest(BigNum, BigNum);
+BigNum bigMinusUnsigned(BigNum, BigNum);
 BigNum bigMinus(BigNum, BigNum);
+
 BigNum bigMul(BigNum, BigNum);
 BigNum bigDiv(BigNum, BigNum);
 BigNum bigMod(BigNum, BigNum);
