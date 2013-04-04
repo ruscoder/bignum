@@ -17,6 +17,7 @@ depends:
 	ln -f -s cppbignum/_cppbignum.so _cppbignum.so
 	ln -f -s cppbignum/cppbignum.py cppbignum.py
 	ln -f -s cppbignum/libcppbignum.so libcppbignum.so
+	ln -f -s cppbignum/cppbignum.py cppbignum.py
 
 
 test_c.o: test_c.c libbignum.so
