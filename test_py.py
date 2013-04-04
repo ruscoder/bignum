@@ -17,6 +17,12 @@ elif op == "/":
 	res = first / second
 elif op == "%":
 	res = first % second
+elif op == "^":
+	res = first ^ second
+
+if len(sys.argv) > 5:
+	mod = bn.Big(sys.argv[5])
+	res = res % mod
 
 
 # Write to res file
