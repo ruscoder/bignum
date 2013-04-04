@@ -36,7 +36,7 @@ BigNum bigNewNum(int len) {
 	res.allocated = len;
 	// Positive
 	res.sign = 0;
-	res.digits = calloc(len, sizeof(int)); 
+	res.digits = malloc(len * sizeof(int)); 
 	if (res.digits == NULL) {
 		printf("Cannot allocate memory.\n");
 		exit(1);
@@ -279,6 +279,7 @@ BigNum bigMinusUnsignedFromLargest(BigNum first, BigNum second) {
 	// A >= B always
 	BigNum res = bigNewNum(MAX(first.len, second.len));
 	int i;
+	bzero(res.digits, sizeof(int) * res.len);
 	for (i = 0; i < res.len; ++i) {
 		int cur = first.digits[i] + res.digits[i];
 		if (i < second.len) {
@@ -305,7 +306,7 @@ void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 			if (cur < second.digits[i]) {
 				cur += BASE;
 				first->digits[i + 1]--;
-			}
+			} 
 			cur -= second.digits[i];
 		}
 		first->digits[i] = cur;
@@ -316,6 +317,7 @@ void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 
 BigNum bigMul(BigNum first, BigNum second) {
 	BigNum res = bigNewNum(first.len + second.len);
+	bzero(res.digits, sizeof(int) * res.len);
 	// Select sign
 	res.sign = first.sign ^ second.sign;  
 	int i;
@@ -348,6 +350,7 @@ BigNum bigMulOnInt(BigNum first, int second) {
 	if (second >= BASE)
 		len = ceil(floor(log10(second) + 1) / DIGITSD);	
 	BigNum res = bigNewNum(first.len + len);
+	bzero(res.digits, sizeof(int) * res.len);
 	// Select sign
 	res.sign = first.sign ^ secondSign;  
 	int i;
