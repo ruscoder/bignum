@@ -52,6 +52,10 @@ const Big Big::operator %(Big &rightVal) {
 	return Big(bigMod(num, rightVal.getNum()));
 }
 
+const Big Big::operator ^(Big &rightVal) {
+	return Big(bigPowMod(num, rightVal.getNum(), bigNone()));
+}
+
 bool Big::operator ==(const Big &second) {
 	if (bigCmp(second.getNum(), num) == 0) 
 		return true;

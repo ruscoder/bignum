@@ -80,6 +80,7 @@ class Big(_object):
     def __mul__(self, *args): return _cppbignum.Big___mul__(self, *args)
     def __div__(self, *args): return _cppbignum.Big___div__(self, *args)
     def __mod__(self, *args): return _cppbignum.Big___mod__(self, *args)
+    def __xor__(self, *args): return _cppbignum.Big___xor__(self, *args)
     def __eq__(self, *args): return _cppbignum.Big___eq__(self, *args)
     def __lt__(self, *args): return _cppbignum.Big___lt__(self, *args)
     def __gt__(self, *args): return _cppbignum.Big___gt__(self, *args)

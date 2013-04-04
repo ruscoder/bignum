@@ -8,6 +8,7 @@ typedef struct __BigNum {
 BigNum newBigNum(int);
 BigNum bigCopy(BigNum);
 void bigFree(BigNum);
+BigNum bigNone();
 
 BigNum bigFromFile(const char *);
 void bigToFile(const char *, BigNum);

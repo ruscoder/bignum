@@ -44,6 +44,13 @@ BigNum bigNewNum(int len) {
 	return res;
 }
 
+BigNum bigNone() {
+	BigNum res;
+	res.len = res.allocated = res.sign = 0;
+	res.digits = NULL;
+	return res;
+}
+
 void bigFree(BigNum num) {
 	delObjectsCount++;
 	free(num.digits);
@@ -514,18 +521,22 @@ BigNum bigPowMod(BigNum first, BigNum second, BigNum module) {
 			res = bigMul(res, cur);
 			bigFree(old);
 			// res = res % module
-			old = res;
-			res = bigMod(res, module);
-			bigFree(old);
+			if (module.digits != NULL) {
+				old = res;
+				res = bigMod(res, module);
+				bigFree(old);
+			}
 		} else {
 			// cur = cur * cur
 			old = cur;
 			cur = bigMul(cur, cur);
 			bigFree(old);
 			// cur = cur % module
-			old = cur;
-			cur = bigMod(cur, module);
-			bigFree(old);
+			if (module.digits != NULL) {
+				old = cur;
+				cur = bigMod(cur, module);
+				bigFree(old);
+			}
 			// st = st / 2
 			old = st;
 			st = bigDivOnInt(st, 2);
