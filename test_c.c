@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
 	if (argc < 5) {
-		printf("Usage: %s <first_file> <+|-|^|*|/|mod> <second_file> <result_file> [-b]", argv[0]);
+		printf("Usage: %s <first_file> <+|-|^|*|/|%%> <second_file> <result_file> [module_file] [-b]", argv[0]);
 		return 1;
 	}
 
@@ -14,6 +14,10 @@ int main(int argc, char **argv) {
 	// Binary form
 	BigNum a = bigFromFile(argv[1]);
 	BigNum b = bigFromFile(argv[3]);
+	BigNum module = bigNone();
+	if (argv[5]) {
+		module = bigFromFile(argv[5]);
+	}
 	BigNum res;
 /*	if (strncmp(argv[5], "-b", 2) ) {
 		a = a;
@@ -38,15 +42,25 @@ int main(int argc, char **argv) {
 		res = bigMod(a, b);	
 		break;
 	case '^':
-		res = bigPowMod(a, b, b);	
+		res = bigPowMod(a, b, module);	
 		break;
 		
 	}
+	// Module for * - / +
+	if (module.digits && argv[2][0] != '^') {
+		BigNum old = res;
+		res = bigMod(res, module);
+		bigFree(old);
+	}
+
 	bigToFile(argv[4], res);
 	bigFree(a);
 	bigFree(b);
 	bigFree(res);
-	
+	if (argv[5]) {
+		bigFree(module);
+	}
+
 	bigVersion();
 	return 0;
 }
