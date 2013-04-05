@@ -6,8 +6,6 @@ DBG = -Wall -ggdb
 MAKE = make
 
 MAIN: depends test_c.o test_cpp.o 
-	$(MAKE) -C cbignum # depends lib
-	$(MAKE) -C cppbignum
 	$(CC) $(DBG) -o test_c test_c.o -L. -lbignum -lm -Wl,-rpath,.
 	g++ $(DBG) -o test_cpp test_cpp.o -L. -lbignum -lcppbignum -Wl,-rpath,. 
 
@@ -18,6 +16,8 @@ depends:
 	ln -f -s cppbignum/cppbignum.py cppbignum.py
 	ln -f -s cppbignum/libcppbignum.so libcppbignum.so
 	ln -f -s cppbignum/cppbignum.py cppbignum.py
+	$(MAKE) -C cbignum # depends lib
+	$(MAKE) -C cppbignum
 
 
 test_c.o: test_c.c libbignum.so
