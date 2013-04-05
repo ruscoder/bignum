@@ -3297,6 +3297,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Big___neg__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Big *arg1 = (Big *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< Big > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Big___neg__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Big___neg__" "', argument " "1"" of type '" "Big *""'"); 
+  }
+  arg1 = reinterpret_cast< Big * >(argp1);
+  result = (arg1)->operator -();
+  resultobj = SWIG_NewPointerObj((new Big(static_cast< const Big& >(result))), SWIGTYPE_p_Big, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Big___mul__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Big *arg1 = (Big *) 0 ;
@@ -3761,6 +3783,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_Big", _wrap_delete_Big, METH_VARARGS, NULL},
 	 { (char *)"Big___add__", _wrap_Big___add__, METH_VARARGS, NULL},
 	 { (char *)"Big___sub__", _wrap_Big___sub__, METH_VARARGS, NULL},
+	 { (char *)"Big___neg__", _wrap_Big___neg__, METH_VARARGS, NULL},
 	 { (char *)"Big___mul__", _wrap_Big___mul__, METH_VARARGS, NULL},
 	 { (char *)"Big___div__", _wrap_Big___div__, METH_VARARGS, NULL},
 	 { (char *)"Big___mod__", _wrap_Big___mod__, METH_VARARGS, NULL},

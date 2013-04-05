@@ -6,14 +6,14 @@ using namespace std;
 void compute(int argc, char **argv) {
 	Big a = Big(argv[1]);
 	Big b = Big(argv[3]);
-	Big res = Big(argv[1]);
+	Big res = a;
 	// Binary form
 /*	if (strncmp(argv[6], "-b", 2) ) {
 		a = a;
 	} else {
 	
 	}
-	*/	
+	*/
 	switch (argv[2][0]) {
 	case '+':
 		res = a + b;

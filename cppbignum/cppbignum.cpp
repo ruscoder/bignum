@@ -38,6 +38,9 @@ const Big Big::operator +(Big &rightVal) {
 
 const Big Big::operator -(Big &rightVal) {
 	return Big(bigMinus(num, rightVal.getNum()));
+} 
+Big Big::operator -() {
+	return Big(bigNegative(bigCopy(num)));
 }
 
 const Big Big::operator *(Big &rightVal) {

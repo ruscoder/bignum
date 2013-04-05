@@ -77,6 +77,7 @@ class Big(_object):
     __del__ = lambda self : None;
     def __add__(self, *args): return _cppbignum.Big___add__(self, *args)
     def __sub__(self, *args): return _cppbignum.Big___sub__(self, *args)
+    def __neg__(self): return _cppbignum.Big___neg__(self)
     def __mul__(self, *args): return _cppbignum.Big___mul__(self, *args)
     def __div__(self, *args): return _cppbignum.Big___div__(self, *args)
     def __mod__(self, *args): return _cppbignum.Big___mod__(self, *args)

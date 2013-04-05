@@ -13,6 +13,7 @@ public:
 	Big &operator =(const Big &); 
 	const Big operator +(Big &);
 	const Big operator -(Big &);
+    const Big operator -(); 
 	const Big operator *(Big &);
 	const Big operator /(Big &);
 	const Big operator %(Big &);
