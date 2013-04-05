@@ -3,13 +3,7 @@
 #include "cppbignum/cppbignum.h"
 
 using namespace std;
-
-int main(int argc, char **argv) {
-	if (argc < 5) {
-		printf("Usage: %s <first_file> <+|-|^|*|/|mod> <second_file> <result_file> [module_file] [-b]", argv[0]);
-		return 1;
-	}
-	
+void compute(int argc, char **argv) {
 	Big a = Big(argv[1]);
 	Big b = Big(argv[3]);
 	Big res = Big(argv[1]);
@@ -47,6 +41,15 @@ int main(int argc, char **argv) {
 	}
 
 	res.toFile(argv[4]);
+}
+int main(int argc, char **argv) {
+	if (argc < 5) {
+		printf("Usage: %s <first_file> <+|-|^|*|/|mod> <second_file> <result_file> [module_file] [-b]", argv[0]);
+		return 1;
+	}
+	compute(argc, argv);
+	bigVersion();	
+
 	return 0;
 }
 
