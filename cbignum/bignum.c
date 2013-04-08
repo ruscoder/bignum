@@ -1,7 +1,6 @@
 /* TODO
  * Make comments documentation 
  */
- 
 #include "bignum.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,16 +8,14 @@
 #include <string.h>
 #include <ctype.h>
 
-#define BASE 1000 * 1000 * 100
-#define DIGITS 8
-#define DIGITSD 8.
-#define OUT_FORMAT "%.8d"
-/*
-#define BASE 10
-#define DIGITS 1
-#define DIGITSD 1.
-#define OUT_FORMAT "%.1d"
-*/
+#define BASEDEC 1000 * 1000 * 100
+#define DIGITSDEC 8
+#define DIGITSDECF 8.
+#define OUT_FORMATDEC "%.8d"
+
+#define BASEBIN 0xFFFFFFFF
+#define DIGITSBIN sizeof(int)
+#define OUT_FORMATBIN "%X"
 
 #define false 0
 #define true 1
@@ -28,12 +25,21 @@
 int newObjectsCount = 0,
 	delObjectsCount = 0;
 
+int computeLen(int num, int base) {
+	// Compute len
+	int len = 1;
+	if (base != BASEBIN && num >= base) {
+		len = ceil(floor( log10(abs(num)) + 1) / DIGITSDECF);	
+	}
+	return len;
+}
 
-BigNum bigNewNum(int len) {
+BigNum bigNewNum(int len, int base) {
 	newObjectsCount++;
 	BigNum res;
 	res.len = len;
 	res.allocated = len;
+	res.base = base;
 	// Positive
 	res.sign = 0;
 	res.digits = calloc(len, sizeof(int)); 
@@ -62,7 +68,7 @@ void bigVersion() {
 }
 
 BigNum bigCopy(BigNum src) {
-	BigNum res = bigNewNum(src.len);
+	BigNum res = bigNewNum(src.len, src.base);
 	memcpy(res.digits, src.digits, sizeof(int) * src.len);
 	res.allocated = src.allocated;
 	res.sign = src.sign;
@@ -96,13 +102,9 @@ BigNum removeLeadNulls(BigNum num) {
 	return num;
 }
 
-BigNum bigFromInt(int num) {
-	// Compute len
-	int len = 1;
-	if (num >= BASE)
-		len = ceil( floor( log10(abs(num)) + 1) / DIGITSD);	
-
-	BigNum res = bigNewNum(len);
+BigNum bigFromInt(int num, int base) {
+	int len = computeLen(num, base);
+	BigNum res = bigNewNum(len, base);
 	// Negative nums
 	if (num < 0) {
 		num = -num;
@@ -111,7 +113,7 @@ BigNum bigFromInt(int num) {
 	// Parse
 	int i = 0;
 	while (num) {
-		div_t divRes = div(num, BASE);
+		div_t divRes = div(num, res.base);
 		res.digits[i] = divRes.rem;
 		num = divRes.quot;
 		i++;
@@ -119,7 +121,27 @@ BigNum bigFromInt(int num) {
 	return removeLeadNulls(res);
 }
 
-BigNum bigFromFile(const char *name) {
+BigNum bigFromFileBin(const char *name) {
+	BigNum res;
+
+	FILE *fp = fopen(name, "rb+");
+	if (fp == NULL) {
+		printf("Cannot open file %s\n", name);
+		exit(1);
+	}
+
+	fseek(fp, 0L, SEEK_END);
+	int size = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+	res = bigNewNum(ceil(size / DIGITSBIN), BASEBIN);
+	
+	fread(res.digits, res.len, sizeof(int), fp);
+
+	fclose(fp);
+	return res;
+}
+
+BigNum bigFromFileDec(const char *name) {
 	BigNum res;
 	
 	FILE *fp = fopen(name, "r+");
@@ -135,21 +157,21 @@ BigNum bigFromFile(const char *name) {
 	// Get file size
 	fseek(fp, 0L, SEEK_END);
 	int size = ftell(fp) - sign;
-	res = bigNewNum(ceil(size / DIGITSD));
+	res = bigNewNum(ceil(size / DIGITSDECF), BASEDEC);
 	// Set sign
 	res.sign = sign;
 	// Seek to start
 	fseek(fp, sign, SEEK_SET);
 	// Read file
-	char buf[DIGITS + 1];
+	char buf[DIGITSDEC + 1];
 	int i, 
-		offset = size % DIGITS,
+		offset = size % DIGITSDEC,
 		count = 0;
 	
 	for (i = res.len - 1; i >= 0; --i) {
 		if (offset == 0) {
 			// Read full num
-			count = DIGITS;
+			count = DIGITSDEC;
 		} else {
 			// Read first part
 			count = offset;
@@ -165,7 +187,18 @@ BigNum bigFromFile(const char *name) {
 }
 
 
-void bigToFile(const char *name, BigNum first) {
+void bigToFileBin(const char *name, BigNum first) {
+	FILE *fp = fopen(name, "wb+");
+	if (fp == NULL) {
+		printf("Cannot open file %s\n", name);
+		return;
+	}
+	fwrite(first.digits, first.len, sizeof(int), fp);
+	fclose(fp);
+}
+
+
+void bigToFileDec(const char *name, BigNum first) {
 	FILE *fp = fopen(name, "w+");
 	if (fp == NULL) {
 		printf("Cannot open file %s\n", name);
@@ -181,13 +214,22 @@ void bigToFile(const char *name, BigNum first) {
 		int i;
 		fprintf(fp, "%d", first.digits[first.len - 1]);
 		for (i = first.len - 2; i >= 0; --i) {
-			fprintf(fp, OUT_FORMAT, first.digits[i]);
+			fprintf(fp, OUT_FORMATDEC, first.digits[i]);
 		}
 	}
 	fclose(fp);
 }
 
+void bigToFile(const char *name, BigNum first) {
+	if (first.base == BASEDEC) {
+		bigToFileDec(name, first);
+	} else {
+		bigToFileBin(name, first);
+	}
+}
+
 void bigOut(BigNum first) {
+	// Only for Decimal
 	if (first.len == 0) {
 		printf("0");
 	} else {
@@ -197,7 +239,7 @@ void bigOut(BigNum first) {
 		int i;
 		printf("%d", first.digits[first.len - 1]);
 		for (i = first.len - 2; i >= 0; --i) {
-			printf(OUT_FORMAT, first.digits[i]);
+			printf(OUT_FORMATDEC, first.digits[i]);
 		}
 	}
 }
@@ -233,7 +275,7 @@ BigNum bigPlus(BigNum first, BigNum second) {
 
 
 BigNum bigPlusUnsigned(BigNum first, BigNum second) {
-	BigNum res = bigNewNum(MAX(first.len, second.len) + 1);
+	BigNum res = bigNewNum(MAX(first.len, second.len) + 1, first.base);
 	int i;
 	unsigned int cur = 0;
 	for (i = 0; i < res.len; ++i) {
@@ -241,7 +283,7 @@ BigNum bigPlusUnsigned(BigNum first, BigNum second) {
 			cur += first.digits[i];
 		if (i < second.len)
 			cur += second.digits[i];
-		ldiv_t divRes = ldiv(cur, BASE);
+		ldiv_t divRes = ldiv(cur, res.base);
 		res.digits[i] = divRes.rem; // %
 		cur = divRes.quot; // div
 	}
@@ -277,13 +319,13 @@ BigNum bigMinusUnsigned(BigNum first, BigNum second) {
 
 BigNum bigMinusUnsignedFromLargest(BigNum first, BigNum second) {
 	// A >= B always
-	BigNum res = bigNewNum(MAX(first.len, second.len));
+	BigNum res = bigNewNum(MAX(first.len, second.len), first.base);
 	int i;
 	for (i = 0; i < res.len; ++i) {
 		int cur = first.digits[i] + res.digits[i];
 		if (i < second.len) {
 			if (cur < second.digits[i]) {
-				cur += BASE;
+				cur += res.base;
 				res.digits[i + 1] = -1;
 			}
 			cur -= second.digits[i];
@@ -303,7 +345,7 @@ void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 		int cur = first->digits[i];
 		if (i < second.len) {
 			if (cur < second.digits[i]) {
-				cur += BASE;
+				cur += first->base;
 				first->digits[i + 1]--;
 			}
 			cur -= second.digits[i];
@@ -315,7 +357,7 @@ void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 }
 
 BigNum bigMul(BigNum first, BigNum second) {
-	BigNum res = bigNewNum(first.len + second.len);
+	BigNum res = bigNewNum(first.len + second.len, first.base);
 	// Select sign
 	res.sign = first.sign ^ second.sign;  
 	int i;
@@ -329,9 +371,9 @@ BigNum bigMul(BigNum first, BigNum second) {
 			else
 				mul = 0;
 			cur += mul + res.digits[i + j];
-			lldiv_t divRes = lldiv(cur, BASE);
+			lldiv_t divRes = lldiv(cur, res.base);
 			res.digits[i + j] = divRes.rem; // %
-			cur = divRes.quot; // div
+			cur = divRes.quot; //v
 		}
 	}
 	return removeLeadNulls(res);	
@@ -344,10 +386,8 @@ BigNum bigMulOnInt(BigNum first, int second) {
 		secondSign = 1;
 	}
 	// Compute len of second
-	int len = 1;
-	if (second >= BASE)
-		len = ceil(floor(log10(second) + 1) / DIGITSD);	
-	BigNum res = bigNewNum(first.len + len);
+	int len = computeLen(second, first.base);
+	BigNum res = bigNewNum(first.len + len, first.base);
 	// Select sign
 	res.sign = first.sign ^ secondSign;  
 	int i;
@@ -356,7 +396,7 @@ BigNum bigMulOnInt(BigNum first, int second) {
 		int j;
 		for (j = 0; cur; ++j) {
 			cur += res.digits[i + j];
-			lldiv_t divRes = lldiv(cur, BASE);
+			lldiv_t divRes = lldiv(cur, res.base);
 			res.digits[i + j] = divRes.rem; // %
 			cur = divRes.quot; // div
 		}
@@ -371,16 +411,14 @@ BigNum bigDivOnInt(BigNum first, int second) {
 		secondSign = 1;
 	}
 	// Compute len of second
-	int len = 1;
-	if (second >= BASE)
-		len = ceil(floor(log10(second) + 1) / DIGITSD);	
-	BigNum res = bigNewNum(first.len - len + 1);
+	int len = computeLen(second, first.base);
+	BigNum res = bigNewNum(first.len - len + 1, first.base);
 	// Select sign
 	res.sign = first.sign ^ secondSign;  
 	int i;
 	long long cur = 0;
 	for (i = first.len - 1; i >= 0; --i) {
-		cur = cur * BASE + first.digits[i];
+		cur = cur * res.base + first.digits[i];
 		lldiv_t divRes = lldiv(cur, second);
 		res.digits[i] = divRes.quot; // div
 		cur = divRes.rem; // %
@@ -393,25 +431,25 @@ BigNum bigDivOnInt(BigNum first, int second) {
 BigNum bigDiv(BigNum first, BigNum second) {
 	// 0 if a < b (nor=t signed)	
 	if (bigCmpUnsigned(first, second) == -1) {
-		return bigFromInt(0);
+		return bigFromInt(0, first.base);
 	}
 	// if second == 0
 	if (second.len == 0) {
 		printf("Division by zero.");
 		exit(1);
 	}
-	BigNum res = bigNewNum(first.len - second.len + 1);
+	BigNum res = bigNewNum(first.len - second.len + 1, first.base);
 	// Select sign
 	res.sign = first.sign ^ second.sign;  
 	int pos = 0,
 		leadNulls = true; 
-	BigNum part = bigNewNum(second.len + 1); 
+	BigNum part = bigNewNum(second.len + 1, first.base); 
 	part.len = 0;
 	for (pos = first.len - 1; pos >= 0; --pos) {
 		// Extend 
 		bigExtend(&part, first.digits[pos]);
 		int l = 0, 
-			r = BASE, 
+			r = res.base, 
 			x = 0;
 		BigNum	secondx;
 		while (l <= r) {
@@ -455,7 +493,7 @@ BigNum bigMod(BigNum first, BigNum second) {
 		exit(1);
 	}
 	
-	BigNum part = bigNewNum(second.len + 1); 
+	BigNum part = bigNewNum(second.len + 1, first.base); 
 	// Part = 0
 	part.len = 0;
 	int pos = 0;
@@ -463,7 +501,7 @@ BigNum bigMod(BigNum first, BigNum second) {
 		// Extend 
 		bigExtend(&part, first.digits[pos]);
 		int l = 0, 
-			r = BASE, 
+			r = part.base, 
 			x = 0;
 		BigNum	secondx;
 		while (l <= r) {
@@ -506,11 +544,11 @@ BigNum bigPowMod(BigNum first, BigNum second, BigNum module) {
 	}
 	// a ^ 0 == 1
 	if (second.len == 0) {
-		return bigFromInt(1);
+		return bigFromInt(1, first.base);
 	}
-	BigNum res = bigFromInt(1), 
+	BigNum res = bigFromInt(1, first.base), 
 		cur = bigCopy(first),
-		one = bigFromInt(1),
+		one = bigFromInt(1, first.base),
 		st = bigCopy(second),
 		old;
 	while (st.len != 0) {

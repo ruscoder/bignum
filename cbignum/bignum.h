@@ -3,15 +3,20 @@ typedef struct __BigNum {
 	char sign;
 	int len;
 	int allocated;
+	int base;
 } BigNum;
 
-BigNum newBigNum(int);
+BigNum newBigNum(int, int);
 BigNum bigCopy(BigNum);
 void bigFree(BigNum);
 BigNum bigNone();
 
-BigNum bigFromFile(const char *);
+BigNum bigFromInt(int, int);
+BigNum bigFromFileDec(const char *);
+BigNum bigFromFileBin(const char *);
 void bigToFile(const char *, BigNum);
+void bigToFileDec(const char *, BigNum);
+void bigToFileBin(const char *, BigNum);
 
 BigNum bigNegative(BigNum);
 
