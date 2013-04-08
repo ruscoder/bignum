@@ -15,6 +15,7 @@
 
 #define BASEBIN 0x1000000
 #define DIGITSBIN 3
+#define DIGITSBINF 3.
 #define OUT_FORMATBIN "%.3X"
 
 #define false 0
@@ -133,7 +134,7 @@ BigNum bigFromFileBin(const char *name) {
 	fseek(fp, 0L, SEEK_END);
 	int size = ftell(fp);
 	fseek(fp, 0L, SEEK_SET);
-	res = bigNewNum(ceil(size / DIGITSBIN), BASEBIN);
+	res = bigNewNum(ceil(size / DIGITSBINF), BASEBIN);
 	int i;
 	for (i = 0; i < res.len; ++i) {
 		fread(&res.digits[i], DIGITSBIN, 1, fp);
@@ -200,9 +201,18 @@ void bigToFileBin(const char *name, BigNum first) {
 		fwrite(&buf, 1, 1, fp);
 	} else {
 		int i;
-		for (i = 0; i < first.len; ++i) {
+		for (i = 0; i < first.len - 1; ++i) {
 			fwrite(&first.digits[i], DIGITSBIN, 1, fp);
 		}
+		int lastSize = DIGITSBIN;
+		// FIX IT: to cycle
+		// shit code :( night.
+		if (first.digits[first.len - 1] < BASEBIN / 0x100)
+			lastSize--;
+		if (first.digits[first.len - 1] < BASEBIN / 0x10000)
+			lastSize--;
+		fwrite(&first.digits[first.len - 1], lastSize, 1, fp);
+
 	}
 	fclose(fp);
 }
