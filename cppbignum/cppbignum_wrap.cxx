@@ -3290,6 +3290,19 @@ extern "C" {
 #endif
 SWIGINTERN PyObject *_wrap_new_Big__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
+  Big *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_Big")) SWIG_fail;
+  result = (Big *)new Big();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Big, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
   int res1 ;
   char *buf1 = 0 ;
@@ -3313,7 +3326,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Big__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
   bool arg2 ;
@@ -3368,7 +3381,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Big__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Big *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -3403,7 +3416,7 @@ SWIGINTERN PyObject *_wrap_Big___add__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___add__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3437,7 +3450,7 @@ SWIGINTERN PyObject *_wrap_Big___sub__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___sub__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3467,7 +3480,7 @@ SWIGINTERN PyObject *_wrap_Big___neg__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:Big___neg__",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3493,7 +3506,7 @@ SWIGINTERN PyObject *_wrap_Big___mul__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___mul__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3527,7 +3540,7 @@ SWIGINTERN PyObject *_wrap_Big___div__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___div__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3561,7 +3574,7 @@ SWIGINTERN PyObject *_wrap_Big___mod__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___mod__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3595,7 +3608,7 @@ SWIGINTERN PyObject *_wrap_Big___xor__(PyObject *SWIGUNUSEDPARM(self), PyObject 
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
-  SwigValueWrapper< Big > result;
+  Big result;
   
   if (!PyArg_ParseTuple(args,(char *)"OO:Big___xor__",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Big, 0 |  0 );
@@ -3789,7 +3802,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_Big__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_Big__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   BigNum *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -3824,17 +3837,12 @@ SWIGINTERN PyObject *_wrap_new_Big(PyObject *self, PyObject *args) {
   for (ii = 0; (ii < 2) && (ii < argc); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
-  if (argc == 1) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Big, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_Big__SWIG_2(self, args);
-    }
+  if (argc == 0) {
+    return _wrap_new_Big__SWIG_0(self, args);
   }
   if (argc == 1) {
     int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_BigNum, 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Big, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_new_Big__SWIG_3(self, args);
@@ -3842,10 +3850,18 @@ SWIGINTERN PyObject *_wrap_new_Big(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v;
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_BigNum, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_Big__SWIG_4(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
     int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_Big__SWIG_0(self, args);
+      return _wrap_new_Big__SWIG_1(self, args);
     }
   }
   if (argc == 2) {
@@ -3858,7 +3874,7 @@ SWIGINTERN PyObject *_wrap_new_Big(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_new_Big__SWIG_1(self, args);
+        return _wrap_new_Big__SWIG_2(self, args);
       }
     }
   }
@@ -3866,6 +3882,7 @@ SWIGINTERN PyObject *_wrap_new_Big(PyObject *self, PyObject *args) {
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_Big'.\n"
     "  Possible C/C++ prototypes are:\n"
+    "    Big::Big()\n"
     "    Big::Big(char const *)\n"
     "    Big::Big(char const *,bool)\n"
     "    Big::Big(Big const &)\n"

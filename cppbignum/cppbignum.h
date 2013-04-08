@@ -4,6 +4,7 @@ extern "C" {
 
 class Big {
 public:
+	Big();
 	Big(const char *);
 	Big(const char *, bool);
 	~Big();

@@ -6,6 +6,10 @@ Big::Big(const char* fileName) {
 	num = bigFromFileDec(fileName);
 }
 
+Big::Big() {
+	num = bigNone();
+}
+
 Big::Big(const char* fileName, bool binary = false) {
 	if (binary) 
 		num = bigFromFileBin(fileName);
@@ -14,7 +18,8 @@ Big::Big(const char* fileName, bool binary = false) {
 }
 
 Big::~Big() {
-	bigFree(num);
+	if (num.digits)
+		bigFree(num);
 }
 
 Big::Big(const BigNum &first) {
