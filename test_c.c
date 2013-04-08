@@ -17,7 +17,6 @@ int main(int argc, char **argv) {
 		res;
 	// Binary form
 	if (argv[5] && strncmp(argv[5], "-b", 2) == 0) {
-		printf("bin");
 		a = bigFromFileBin(argv[1]);
 		b = bigFromFileBin(argv[3]);
 		if (argv[6]) {
