@@ -1,8 +1,16 @@
 #include <string>
 #include "cppbignum.h"
 #include <cstdio>
+
 Big::Big(const char* fileName) {
-	num = bigFromFile(fileName);
+	num = bigFromFileDec(fileName);
+}
+
+Big::Big(const char* fileName, bool binary = false) {
+	if (binary) 
+		num = bigFromFileBin(fileName);
+	else
+		num = bigFromFileDec(fileName);
 }
 
 Big::~Big() {

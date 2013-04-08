@@ -5,6 +5,7 @@ extern "C" {
 class Big {
 public:
 	Big(const char *);
+	Big(const char *, bool);
 	~Big();
 	Big(const Big &);
 	Big &operator =(const Big &); 
