@@ -243,7 +243,7 @@ void bigOutBin(BigNum first) {
 		printf("0");
 	} else {
 		int i;
-		printf("%X", first.digits[i]);
+		printf("%X", first.digits[0]);
 		for (i = 1; i < first.len; ++i) {
 			printf(OUT_FORMATBIN, first.digits[i]);
 		}

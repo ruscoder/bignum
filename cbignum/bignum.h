@@ -15,8 +15,6 @@ BigNum bigFromInt(int, unsigned int);
 BigNum bigFromFileDec(const char *);
 BigNum bigFromFileBin(const char *);
 void bigToFile(const char *, BigNum);
-void bigToFileDec(const char *, BigNum);
-void bigToFileBin(const char *, BigNum);
 
 BigNum bigNegative(BigNum);
 
