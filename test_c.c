@@ -6,25 +6,32 @@
 
 int main(int argc, char **argv) {
 	if (argc < 5) {
-		printf("Usage: %s <first_file> <+|-|^|*|/|%%> <second_file> <result_file> [module_file] [-b]", argv[0]);
+		printf("Usage: %s <first_file> <+|-|^|*|/|%%> <second_file> <result_file> [-b] [module_file] ", argv[0]);
 		return 1;
 	}
 
-	//int *first, *second;
+
+	BigNum a, 
+		b, 
+		module = bigNone(), 
+		res;
 	// Binary form
-	BigNum a = bigFromFile(argv[1]);
-	BigNum b = bigFromFile(argv[3]);
-	BigNum module = bigNone();
-	if (argv[5]) {
-		module = bigFromFile(argv[5]);
-	}
-	BigNum res;
-/*	if (strncmp(argv[5], "-b", 2) ) {
-		a = a;
+	if (argv[5] && strncmp(argv[5], "-b", 2) == 0) {
+		printf("bin");
+		a = bigFromFileBin(argv[1]);
+		b = bigFromFileBin(argv[3]);
+		if (argv[6]) {
+			module = bigFromFileBin(argv[6]);
+		}
 	} else {
+		a = bigFromFileDec(argv[1]);
+		b = bigFromFileDec(argv[3]);
+		if (argv[5]) {
+			module = bigFromFileDec(argv[5]);
+		}
 	
 	}
-	*/	
+
 	switch (argv[2][0]) {
 	case '+':
 		res = bigPlus(a, b);	
@@ -52,15 +59,20 @@ int main(int argc, char **argv) {
 		res = bigMod(res, module);
 		bigFree(old);
 	}
-
 	bigToFile(argv[4], res);
 	bigFree(a);
 	bigFree(b);
 	bigFree(res);
-	if (argv[5]) {
-		bigFree(module);
+	if (argv[5] && strncmp(argv[5], "-b", 2) == 0) {
+		if (argv[6]) {
+			bigFree(module);
+		}
+	} else {
+		if (argv[5])
+		{
+			bigFree(module);
+		}
 	}
-
 	bigVersion();
 	return 0;
 }
