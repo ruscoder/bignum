@@ -80,7 +80,7 @@ BigNum bigCopy(BigNum src) {
 void bigExtend(BigNum *src, int num) {
 	src->len++;
 	if (src->len > src->allocated) {
-		printf("Wrong using of bigExtend!\n");
+		printf("Wrong using of bigExtend! len = %d, alloc = %d, base = %d\n", src->len, src->allocated, src->base);
 		exit(1);
 	}
 	int i;
@@ -379,18 +379,20 @@ BigNum bigMinusUnsignedFromLargest(BigNum first, BigNum second) {
 void bigMinusUnsignedFromFirst(BigNum *first, BigNum second) {
 	// A >= B always
 	int i;
+
 	for (i = 0; i < first->len; ++i) {
-		unsigned long long cur = first->digits[i];
+		long long cur = first->digits[i];
+		
 		if (i < second.len) {
 			if (cur < second.digits[i]) {
 				cur += first->base;
 				first->digits[i + 1]--;
 			}
-			cur -= second.digits[i];
+			cur = cur - second.digits[i];
 		}
 		first->digits[i] = cur;
 	}	
-	
+		
 	*first = removeLeadNulls(*first);
 }
 
