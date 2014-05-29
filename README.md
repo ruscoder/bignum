@@ -8,3 +8,5 @@ Usage: ./full_test first second
 
 Programm fully pass my random tests.
 
+Author:
+Vadim 
